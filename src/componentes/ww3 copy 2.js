@@ -67,7 +67,7 @@ export default function App() {
 
   return (
     <div>
-      <button onClick={sendMessage}>send message</button>
+      <button onClick={sendMessage}>Enviar mensajewww</button>
       {/* Button to trigger sending a message */}
       <div className="App">
         <ConnectionState isConnected={isConnected} />
