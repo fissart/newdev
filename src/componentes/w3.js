@@ -28,7 +28,7 @@ const Blogs = () => {
         console.log(www)
       });
   }
-  const wwwww = () => {
+  const create = () => {
     fetch('https://www.esfapa.edu.pe:9997/api', {
       method: 'POST',
       headers: {
@@ -161,7 +161,7 @@ const Blogs = () => {
 
       <Wwwww />
       <div>{listItems}</div>
-      <button onClick={() => wwwww()}>New</button>
+      <button onClick={() => create()}>Create new</button>
       <ToastContainer
         position="top-right" autoClose={1000} hideProgressBar={false} newestOnTop={false} closeOnClick={true} rtl={false} pauseOnFocusLoss={false} draggable pauseOnHover={false} closeButton={false}
       />
