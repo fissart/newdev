@@ -8,9 +8,8 @@ const Blogs = () => {
     // setFormData({ ...formData, rol:"3", name:"www", email:"www", foto:"www", password:"www" })
   }, []);
 
-
   const login = () => {
-    fetch("https://www.esfapa.edu.pe:9997/api/login/w@w/www")
+    fetch(process.env.REACT_APP_URL+"/api/login/w@w/www")
       .then((response) => response.json())
       .then((www) => {
         console.log(www)
@@ -21,15 +20,15 @@ const Blogs = () => {
     }
 
   const get = () => {
-    fetch("https://www.esfapa.edu.pe:9997/api")
+    fetch(process.env.REACT_APP_URL+"/api")
       .then((response) => response.json())
       .then((www) => {
         setWww(www); // ⬅️ Guardar datos
         console.log(www)
       });
   }
-  const create = () => {
-    fetch('https://www.esfapa.edu.pe:9997/api', {
+  const wwwww = () => {
+    fetch(process.env.REACT_APP_URL+'/api', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -46,7 +45,7 @@ const Blogs = () => {
   }
 
   const wwdelete = (item) => {
-    return fetch('https://www.esfapa.edu.pe:9997/api/' + item, {
+    return fetch(process.env.REACT_APP_URL+'/api/' + item, {
       method: 'delete'
     })
       .then(response => response.json())
@@ -54,7 +53,7 @@ const Blogs = () => {
   }
 
   const update = (id) => {
-    fetch("https://www.esfapa.edu.pe:9997/api/" + id, {
+    fetch(process.env.REACT_APP_URL+"/api/" + id, {
       method: 'put',
       headers: {
         'Content-Type': 'application/json'
@@ -121,7 +120,7 @@ const Blogs = () => {
     data.append("name", formData.name)
     console.log(data)
 
-    fetch("https://www.esfapa.edu.pe:9997/api", {
+    fetch(process.env.REACT_APP_URL+"/api", {
       method: 'POST',
       body: data
     }).then(response => response.json())
@@ -152,6 +151,8 @@ const Blogs = () => {
       <div style={{ backgroundColor: 'white', margin: '.1cm' }}>{number.mensaje}</div>
       <div style={{ backgroundColor: 'white', margin: '.1cm' }}>{number.createdAt}</div>
       <div style={{ backgroundColor: 'white', margin: '.1cm' }}>{number.updatedAt}</div>
+      <img src={process.env.REACT_APP_URL+'/link/'+number.file} height="50px" />
+    {process.env.REACT_APP_URL+'/link/'+number.file}
     </div>
   ) : 'www';
 
@@ -161,7 +162,7 @@ const Blogs = () => {
 
       <Wwwww />
       <div>{listItems}</div>
-      <button onClick={() => create()}>Create new</button>
+      <button onClick={() => wwwww()}>New</button>
       <ToastContainer
         position="top-right" autoClose={1000} hideProgressBar={false} newestOnTop={false} closeOnClick={true} rtl={false} pauseOnFocusLoss={false} draggable pauseOnHover={false} closeButton={false}
       />

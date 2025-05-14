@@ -5,44 +5,10 @@ import { saveAs } from 'file-saver';
 
 const ExportToExcel = ({ data, fileName }) => {
 
-  const exportExcelwww = async () => {
-
-    const workbook = new ExcelJS.Workbook();
-    // const worksheet = workbook.addWorksheet('Data Report');
-
-    let worksheet = workbook.addWorksheet('1', {
-      pageSetup: { paperSize: 8, orientation: 'landscape' },
-      properties: { showGridLines: false }
-    });//pagina 
-    //let worksheet = workbook.addWorksheet('2', {pageSetup:{paperSize: 9, orientation:'landscape'}});//pagina2
-    worksheet.pageSetup.margins = {
-      left: 0.8, right: 0.35,
-      top: 0.35, bottom: 0.35,
-      header: 0.0, footer: 0.0
-    };
-    // Set Print Area for a sheet 
-    worksheet.pageSetup.printArea = 'A1:AJ110';
-
-    worksheet.mergeCells('C4:AG4');
-    worksheet.mergeCells('C6:AG6');
-    worksheet.getCell('C4').value = 'ESCUELA SUPERIOR DE FORMACIÓN ARTÍSTICA PÚBLICA "FELIPE GUAMÁN POMA DE AYALA" DE AYACUCHO';
-    worksheet.getCell('C6').value = 'ACTA CONSOLIDADA DE EVALUACIÓN DEL RENDIMIENTO ACADÉMICO'
-    // worksheet.getCell('C4').font = { name: 'arial', family: 4, size: 19, bold: true }
-    // worksheet.getCell('C6').font = { name: 'arial', family: 4, size: 19, bold: true }
-
-    worksheet.getCell('C6').font = { color: { argb: '3a80d5' }, name: 'arial', family: 4, size: 6, bold: false }
-    worksheet.getCell('C6').alignment = { vertical: 'middle', horizontal: 'center', textRotation: 90, wrapText: true };
-
-
-    const buffer = await workbook.xlsx.writeBuffer();
-    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    saveAs(blob, `wwwww.xlsx`);
-
-
-  }
  
   const exportExcel = async () => {
-    fetch("https://www.esfapa.edu.pe:9997/api/4/ED/2024")
+    console.log("www")
+    fetch(process.env.REACT_APP_URL + '/api/4/ED/2024')
       .then((response) => response.json())
       .then(async (www) => {
 
@@ -991,8 +957,7 @@ const ExportToExcel = ({ data, fileName }) => {
 
   return (
     <>
-      <button onClick={exportExcel}>ACTA</button>
-      <button onClick={exportExcelwww}>wwwww</button>
+      <button onClick={exportExcel}>www</button>
     </>
   );
 };

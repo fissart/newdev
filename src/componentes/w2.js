@@ -9,7 +9,6 @@ const images = [
   { position: [-0.8, 0, -0.6], rotation: [0, 0, 0], url: './logo192.png' },
   { position: [-1.5, 0, -1.6], rotation: [0, 0, 0], url: pexel(416430) },
   { position: [0.8, 0, -0.6], rotation: [0, 0, 0], url: './ww_w.png' },
-  { position: [-3, 0, 3.5], rotation: [0, Math.PI / 2.5, 0], url: './foto1.png' },
   // Left
   { position: [-1.75, 0, 0.25], rotation: [0, Math.PI / 2.5, 0], url: pexel(327482) },
   { position: [-2.15, 0, 1.5], rotation: [0, Math.PI / 2.5, 0], url: pexel(325185) },
@@ -21,7 +20,7 @@ const images = [
 ]
 const Home = () => {
   return (
-    <div style={{ backgroundColor: 'goldenrod', height: '12cm', margin: 'auto' }}>
+    <div style={{ height: '18cm', margin: 'auto' }}>
       <App images={images} />
       {/* <img src="./www/foto1.png"/> */}
           </div>

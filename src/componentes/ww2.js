@@ -6,7 +6,7 @@ import { FlakesTexture } from 'three-stdlib'
 
 export default function App() {
   return (
-    <Canvas shadows camera={{ position: [4, 2.5, 8], fov: 35 }}>
+    <Canvas shadows camera={{ position: [8, 2.5, ], fov: 35 }}>
       <group position={[1, -0.5, 0]}>
         <Center top>
           <Suzi rotation={[-0.63, 0, 0]} scale={2} />

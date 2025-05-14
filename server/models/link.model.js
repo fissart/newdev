@@ -5,9 +5,12 @@ const userSchema = new Schema(
     curse: {
       type: Schema.Types.ObjectId,
     },
-    link: { type: String },
+    user: {
+      type: Schema.Types.ObjectId,
+    },
     file: { type: String },
     name: { type: String },
+    detail: { type: String },
     type: { type: String },
   },
   {
@@ -15,4 +18,4 @@ const userSchema = new Schema(
   }
 );
 
-module.exports = model("Link", userSchema);
+module.exports = model("Editor", userSchema);

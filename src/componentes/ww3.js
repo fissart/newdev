@@ -33,7 +33,7 @@ export default function App() {
       </group>
       <Env />
       {/* <OrbitControls autoRotate autoRotateSpeed={4} enablePan={false} enableZoom={false} minPolarAngle={Math.PI / 2.1} maxPolarAngle={Math.PI / 2.1} /> */}
-      <OrbitControls enablePan={false} enableZoom={false} minPolarAngle={Math.PI / 1.9} maxPolarAngle={Math.PI / 2} />
+      <OrbitControls minPolarAngle={0} maxPolarAngle={Math.PI}  minAzimuthAngle={-Infinity} maxAzimuthAngle={Infinity}/>
     </Canvas>
   )
 }
