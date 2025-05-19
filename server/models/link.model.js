@@ -9,8 +9,8 @@ const userSchema = new Schema(
       type: Schema.Types.ObjectId,
     },
     file: { type: String },
-    name: { type: String },
-    detail: { type: String },
+    title: { type: String },
+    description: { type: String },
     type: { type: String },
   },
   {
@@ -18,4 +18,4 @@ const userSchema = new Schema(
   }
 );
 
-module.exports = model("Editor", userSchema);
+module.exports = model("Collection", userSchema);

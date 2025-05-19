@@ -23,7 +23,7 @@ function App() {
     fetch(process.env.REACT_APP_URL + "/api/links/editor/MV")
       .then((response) => response.json())
       .then((www) => {
-        setWww(www); // ⬅️ Guardar datos
+        setWww(www.reverse()); // ⬅️ Guardar datos
         console.log(www)
       })
       // .then(data => { toast.warning(data); get() })
@@ -114,7 +114,7 @@ function App() {
       </div>
       <div>{listItems}</div>
       <ToastContainer
-        position="top-right" autoClose={1000} hideProgressBar={false} newestOnTop={false} closeOnClick={true} rtl={false} pauseOnFocusLoss={false} draggable pauseOnHover={false} closeButton={false}
+        position="bottom-right" autoClose={1000} hideProgressBar={false} newestOnTop={false} closeOnClick={true} rtl={false} pauseOnFocusLoss={false} draggable pauseOnHover={false} closeButton={false}
       />
     </div>
   );

@@ -26,8 +26,8 @@ notesww.createLink = async (req, res) => {
       file: req.body.curse + "_" + myFile.name,
       curse: req.body.curse,
       user: req.body.user,
-      name: req.body.name,
-      detail: req.body.detail,
+      title: req.body.name,
+      description: req.body.detail,
       type: req.body.type,
     });
     await newNote.save();
@@ -35,8 +35,8 @@ notesww.createLink = async (req, res) => {
     const newNote = new Link({
       curse: req.body.curse,
       user: req.body.user,
-      name: req.body.name,
-      detail: req.body.detail,
+      title: req.body.name,
+      description: req.body.detail,
       type: req.body.type,
     });
     await newNote.save()
@@ -70,13 +70,13 @@ notesww.updateLink = async (req, res) => {
 
     await Link.findByIdAndUpdate(req.params.id, {
       file: req.body.curse + "_" + myFile.name,
-      name: req.body.name,
-      detail: req.body.detail,
+      title: req.body.name,
+      description: req.body.detail,
     });
   } else {
     await Link.findByIdAndUpdate(req.params.id, {
-      name: req.body.name,
-      detail: req.body.detail,
+      title: req.body.name,
+      description: req.body.detail,
     });
   }
 

@@ -1,0 +1,909 @@
+#!/bin/bash
+
+# This tells shellcheck not to check this file
+# shellcheck disable=SC1091
+. /etc/WolfLandBuilder/WolfLandBuilder.version
+
+# checking to make sure script is running with root privileges
+if [ "$(whoami)" != "root" ]; then
+    echo "Need to be root or run with sudo. Exiting."
+    exit 1
+fi
+
+#create WolfLandBuilder-firstboot script if it doesn't exist and populate with at least removal of the ubiquity*.desktop file from users Desktop and fix for recovery mode
+fbtest=$(grep "REM302" /etc/init.d/WolfLandBuilder-firstboot)
+
+if [ "$fbtest" = "" ]; then
+    cat > /etc/init.d/WolfLandBuilder-firstboot <<FOO
+#! /bin/sh
+### BEGIN INIT INFO
+# Provides:          WolfLandBuilder-firstboot
+# Required-Start:    \$remote_fs \$syslog \$all
+# Required-Stop:
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Run firstboot items for WolfLandBuilder after a remastered system has been installed
+### END INIT INFO
+
+PATH=/sbin:/usr/sbin:/bin:/usr/bin:/usr/local/bin:/usr/local/sbin
+
+. /lib/init/vars.sh
+. /lib/lsb/init-functions
+
+do_start() {
+        #REM302
+        if [ "\`cat /proc/cmdline | grep casper\`" = "" ]; then
+            [ "\$VERBOSE" != no ] && log_begin_msg "Running WolfLandBuilder-firstboot"
+            (sleep 60 && update-rc.d -f WolfLandBuilder-firstboot remove) &
+            sed -i -e 's/root:x:/root:!:/g' /etc/shadow
+            rm -rf /home/*/*/ubiquity*.desktop
+            rm -rf /usr/share/applications/kde4/ubiquity-kdeui.desktop
+            rm -rf /usr/share/applications/ubiquity.desktop
+            rm -rf /etc/rc.local
+            rm -r /etc/apt
+            tar -xf /root/apt.tar.gz -C /
+            rm -rf /root/apt.tar.gz
+            #apt-get -y -q purge firefox-locale-en libreoffice-help-en-* &> /dev/null
+            #update-apt-xapian-index -vf
+            #Place your custom commands below this line
+            #Example to remove WolfLandBuilder and clean up packages
+
+            #apt-get purge wolflandbuilder --yes --assume-yes
+            #apt-get --yes --assume-yes autoremove
+
+            #Place your custom commands above this line
+            ES=\$?
+            [ "\$VERBOSE" != no ] && log_end_msg \$ES
+            return \$ES
+        fi
+
+        
+
+
+} 
+
+case "\$1" in
+    start)
+        do_start
+        ;;
+    restart|reload|force-reload)
+        echo "Error: argument '\$1' not supported" >&2
+        exit 3
+        ;;
+    stop)
+        ;;
+    *)
+        echo "Usage: \$0 start|stop" >&2
+        exit 3
+        ;;
+esac
+
+FOO
+
+fi
+
+
+# load the WolfLandBuilder.conf file
+# This tells shellcheck not to check this file
+# shellcheck disable=SC1091
+. /etc/WolfLandBuilder.conf
+
+# if the WolfLandBuilder.conf file is incorrect or missing, make sure to set defaults
+
+if [ "$LIVEUSER" = "" ]; then
+    #Somebody must have removed the username from the configuration file
+    echo 
+    #this is a custom live user
+    LIVEUSER="custom"
+fi
+
+#make sure live user is all lowercase
+LIVEUSER=$(echo $LIVEUSER | awk '{print tolower ($0)}')
+
+if [ "$WORKDIR" = "" ]; then
+    BASEWORKDIR="/home/WolfLandBuilder"
+    WORKDIR="/home/WolfLandBuilder/WolfLandBuilder"
+else
+    BASEWORKDIR="$WORKDIR"
+    WORKDIR="$WORKDIR/WolfLandBuilder"
+fi
+
+if [ ! -d $WORKDIR ]; then
+    mkdir -p $WORKDIR
+fi
+
+#setup name variable for $CUSTOMLOG based on $CUSTOMISO name
+CUSTOMLOG=${CUSTOMISO%.iso}
+
+if [ -f $WORKDIR/"$CUSTOMLOG.log" ]; then
+    rm -f $WORKDIR/"$CUSTOMLOG.log" &> /dev/null
+fi
+
+touch $WORKDIR/"$CUSTOMLOG.log"
+
+# New log/debug log proc. Code by Carlos P. Rodriguez
+log-msg() {
+	
+	if [ "$ENABLEDEBUGLOG" = "0" ]; then
+       echo "$1"
+       echo "$1" >>$WORKDIR/"$CUSTOMLOG.log"	
+    else
+       if [[ -n "$1" ]]; then
+           echo "$1"
+           IN="$1"
+       else
+           while read -r INPUT; do
+               IN="$IN\n$INPUT"
+           done
+       fi
+       # shellcheck disable=SC2128
+       echo -e "[$(date --rfc-3339=seconds)], ${BASH_LINENO}: $IN" >>$WORKDIR/"$CUSTOMLOG.log"
+    fi
+}
+
+if [ "$LIVECDLABEL" = "" ]; then
+    LIVECDLABEL="Custom Live CD"
+fi
+
+if [ "$LIVECDURL" = "" ]; then
+    LIVECDURL=""
+fi
+
+if [ "$SQUASHFSOPTS" = "" ]; then
+    SQUASHFSOPTS="-no-recovery -always-use-fragments -b 1M -no-duplicates -comp xz -Xbcj x86"
+fi
+
+if [[ "$ENABLEDEBUGLOG" = "0" ||  "$ENABLEDEBUGLOG" = "1" ]]; then
+    echo
+else
+    ENABLEDEBUGLOG="0"
+fi
+
+if [ "$2" = "cdfs" ]; then
+    log-msg "Creating the cd filesystem only"
+elif [ "$2" = "iso" ]; then
+    log-msg "Creating the iso file only"
+elif [ "$2" = "" ]; then
+    echo " "
+else
+    CUSTOMISO="$2"
+fi
+
+if [ "$3" != "" ]; then
+    CUSTOMISO="$3"
+fi
+
+if [ "$CUSTOMISO" = "" ]; then
+    CUSTOMISO="custom$1.iso"
+fi
+
+CODENAME=$(lsb_release -c --short)
+if [ "$SOURCESLIST" = "" ]; then
+    SOURCESLIST="deb http://archive.ubuntu.com/ubuntu $CODENAME main restricted
+deb http://archive.ubuntu.com/ubuntu $CODENAME universe
+deb http://archive.ubuntu.com/ubuntu $CODENAME-backports main restricted universe multiverse
+deb http://archive.canonical.com/ubuntu $CODENAME partner
+deb http://archive.ubuntu.com/ubuntu $CODENAME-security main restricted
+deb http://archive.ubuntu.com/ubuntu $CODENAME-security universe
+deb http://archive.ubuntu.com/ubuntu $CODENAME-security multiverse
+## Major bug fix updates produced after the final release of the distribution.
+deb http://archive.ubuntu.com/ubuntu $CODENAME-updates main restricted
+deb http://archive.ubuntu.com/ubuntu $CODENAME-updates universe
+deb http://archive.ubuntu.com/ubuntu $CODENAME-updates multiverse"
+fi
+
+case $1  in
+
+    clean)
+        echo "Removing the build directory now..."
+        rm -rf $WORKDIR
+        echo "Done...Exiting"
+        exit 0
+        ;;
+
+    dist)
+        log-msg "Distribution Mode Selected"
+        ;;
+
+
+    *)
+        # This tells shellcheck to not worry about $WolfLandBuilderVERSION not being assigned
+        # as it comes from the /etc/WolfLandBuilder.version file
+        # shellcheck disable=SC2154
+        echo "Usage of WolfLandBuilder $WolfLandBuilderVERSION is as follows:"
+        echo " "
+        echo "   sudo WolfLandBuilder clean|dist [cdfs|iso] [filename.iso]"
+        echo " "
+        echo " "
+        echo "Examples:"
+        echo " "
+        echo " "
+        echo "   sudo WolfLandBuilder clean    (to clean up temporary files of WolfLandBuilder)"
+        echo " "
+        echo "   sudo WolfLandBuilder dist     (to make a distributable livecd/dvd of your system)"
+        echo " "
+        echo "   sudo WolfLandBuilder dist cdfs"
+        echo "                             (to make a distributable livecd/dvd filesystem only)"
+        echo " "
+        echo "   sudo WolfLandBuilder dist iso custom.iso"
+        echo "                             (to make a distributable iso named custom.iso but only"
+        echo "                              if the cdfs is already present)"
+        echo " "
+        echo "   cdfs and iso options should only be used if you wish to modify something on the"
+        echo "   cd before the iso is created.  An example of this would be to modify the isolinux"
+        echo "   portion of the livecd/dvd"
+        echo " "
+        exit 1
+        ;;
+
+esac
+
+cdfs (){
+#Cleaning build machine Apt and backing up to /root and /etc/WolfLandBuilder 20201108 BOG
+log-msg "Cleaning build machine Apt and backing up to /root and /etc/WolfLandBuilder"
+find /etc/apt -type f -iname \*.save -delete &> /dev/null
+find /etc/apt -type f -iname \*~ -delete &> /dev/null
+tar pczvf /root/apt.tar.gz /etc/apt &> /dev/null
+tar pczvf /etc/WolfLandBuilder/apt.tar.gz /etc/apt &> /dev/null
+apt-get update &> /dev/null
+    
+#Cleaning systemd journal to save ISO image space
+log-msg "Cleaning systemd journal to save ISO image space"
+journalctl --vacuum-time=10d &> /dev/null
+
+log-msg "Enabling WolfLandBuilder-firstboot"
+chmod 755 /etc/init.d/WolfLandBuilder-firstboot
+update-rc.d WolfLandBuilder-firstboot defaults
+
+log-msg "Checking filesystem type of the Working Folder"
+DIRTYPE=$(df -T -P $WORKDIR | grep "^\/dev" | awk '{print $2}')
+log-msg "$WORKDIR is on a $DIRTYPE filesystem"
+
+
+    #Changing caspers user-uid
+    log-msg "Changing caspers user-uid"
+    sed -i -e 's@user-uid [0-9]*@user-uid 990@' /usr/share/initramfs-tools/scripts/casper-bottom/*adduser
+
+    #make sure there is no telemetry - Linux Lite
+    log_msg "Making sure there is no telemetry installed in Linux Lite"
+    apt-get -y -q remove ubuntu-report apport whoopsie &> /dev/null
+    echo "[*] Resolving \"metrics.ubuntu.com\" to localhost"
+    echo 127.0.0.1 www.metrics.ubuntu.com >>/etc/hosts
+    echo 127.0.0.1 metrics.ubuntu.com >>/etc/hosts
+    echo "[*] Resolving \"popcon.ubuntu.com\" to localhost"
+    echo 127.0.0.1 www.popcon.ubuntu.com >>/etc/hosts
+    echo 127.0.0.1 popcon.ubuntu.com >>/etc/hosts
+    
+    #removing popularity-contest as it causes a problem when installing with ubiquity and is also telemetry
+    log-msg "Making sure popularity contest is not installed"
+    apt-get -y -q remove popularity-contest &> /dev/null
+
+    #removing syslinux-themes as it causes problems
+    log-msg "Making sure syslinux-themes is not installed"
+    apt-get -y -q purge syslinux-themes* &> /dev/null
+
+    #removing gnome-initial-setup as it causes problems
+    log-msg "Making sure gnome-initial-setup is not installed"
+    apt-get -y -q purge gnome-initial-setup &> /dev/null
+
+    #Installing zfs-initramfs if needed (for 19.10+)
+    log-msg "Making sure zfs-initramfs is installed"
+    apt-get -y -q install zfs-initramfs zfs-zed zfsutils-linux &> /dev/null    
+
+    #This next step is CRITICAL as archdetect now comes from Ubiquity and NOT
+    #archdetect-deb in 20.10. Since archdetect-deb and Ubiquity are now not
+    #compatible archdetect-deb has been removed from the WolfLandBuilder depends
+    #list and we get it from Ubiquity. This means we MUST have the Ubiquity frontend
+    #installed before we can progress any further in the program so we have to check
+    #the return code for the command and if it fails we fail and exit the program.
+
+    # check whether system is gnome or kde based to load the correct ubiquity frontend
+    if [[ "$(pgrep -ln startkde)" != "" || "$(pgrep -ln kwin)" != "" ]]; then
+        log-msg "Installing the Ubiquity KDE frontend"
+        apt-get -y -q purge ubiquity-casper &> /dev/null
+        apt-get -y -q purge ubiquity &> /dev/null
+        apt-get -y -q purge ubiquity-ubuntu-artwork &> /dev/null
+        apt-get -y -q remove ubiquity-frontend-kde &> /dev/null
+        #Add RC check to Ubiquity frontend install. Exit if fails
+        if apt-get -y -q install ubiquity-frontend-kde > /dev/null; then
+            log-msg "Ubiquity KDE frontend Installed"
+        else
+            log-msg "Ubiquity KDE frontend failed to Install, Exiting"
+            exit 1
+        fi         
+        apt-get -y -q remove ubiquity-frontend-gtk &> /dev/null
+        chmod +x /usr/share/applications/kde4/ubiquity-kdeui.desktop &> /dev/null
+        sed -i "s/ubiquity kde_ui/pkexec ubiquity kde_ui/" /usr/share/applications/kde4/ubiquity-kdeui.desktop
+    else
+        log-msg "Installing the Ubiquity GTK frontend"
+        apt-get -y -q purge ubiquity-casper &> /dev/null
+        apt-get -y -q purge ubiquity &> /dev/null
+        apt-get -y -q purge ubiquity-ubuntu-artwork &> /dev/null
+        apt-get -y -q remove ubiquity-frontend-gtk &> /dev/null
+        #Add RC check to Ubiquity frontend install. Exit if fails
+        if apt-get -y -q install ubiquity-frontend-gtk > /dev/null; then
+            log-msg "Ubiquity GTK frontend Installed"
+        else
+            log-msg "Ubiquity GTK frontend failed to Install, Exiting"
+            exit 1
+        fi         
+        apt-get -y -q remove ubiquity-frontend-kde &> /dev/null
+        chmod +x /usr/share/applications/ubiquity.desktop &> /dev/null
+        sed -i "s/sh -c 'ubiquity gtk_ui'/pkexec ubiquity gtk_ui/" /usr/share/applications/ubiquity.desktop
+    fi
+
+    #Detect Architecture and export so it can be used in the ISO code block as
+    #well as the CDFS block. This way we only have to check and set it once as
+    #it is used in both code blocks. This is due to archdetect being provided
+    #by ubiquity which is installed when we install the ubiquity frontend but
+    #we remove the ubiquity frontend in the CDFS block making it unavailable
+    #for use in the ISO block otherwise BOG 20201105.
+    log-msg "Checking and setting the Architecture of the system"
+    ARCH=$(archdetect | awk -F "/" '{print $1}')
+    export ARCH
+
+    # Replacing Ubiquity icons
+    log-msg "Replacing Ubiquity icons"
+    cp -a /etc/WolfLandBuilder/icons /usr/share/
+    rm -rf /usr/share/icons/hicolor/256x256/apps/ubuntu-logo-icon.png
+    ln -s /usr/share/icons/ubuntu-logo-icon.png /usr/share/icons/hicolor/256x256/apps
+    chmod 777 /usr/share/icons/hicolor/256x256/apps/ubuntu-logo-icon.png
+    chmod 777 /usr/share/icons/ubuntu-logo-icon.png
+    gtk-update-icon-cache
+    update-icon-caches /usr/share/icons/*
+
+    log-msg "Cleaning System before building"
+    log-msg "Cleaning Apt package cache"
+    apt-get clean
+    rm -rf /opt/teamviewer/config/global.conf
+
+    #Removing swapfile
+    log-msg "Removing Swapfile"
+    swapoff -v /swapfile &> /dev/null
+    rm /swapfile &> /dev/null
+    sed -i '/swapfile/d' /etc/fstab &> /dev/null
+
+    log-msg "Renaming Distro to $LIVECDLABEL"
+    sed -i 's/PRETTY_NAME=.*/PRETTY_NAME="LIVECDLABEL"/g' /usr/lib/os-release
+    sed -i "s/LIVECDLABEL/$LIVECDLABEL/g" /usr/lib/os-release
+
+    # Check if they are using lightdm and if it is setup properly for the live default session
+    # [ "`grep lightdm /etc/X11/default-display-manager`" != "" ] && [ ! -f /etc/lightdm/lightdm.conf ] && [ ! -f /usr/share/xsessions/ubuntu.desktop ] && echo "Lightdm not setup properly. You must set your default desktop with lightdm prior to remastering" &&  echo "Lightdm not setup properly. You must set your default desktop with lightdm prior to remastering" >> $WORKDIR/"$CUSTOMLOG.log" && exit 1
+
+    # prevent the installer from changing the apt sources.list
+
+    sed -i '/rm/d' /usr/share/ubiquity/apt-setup
+    sed -i '/boot/d' /usr/share/ubiquity/apt-setup
+    sed -i '/cdrom:/d' /usr/share/ubiquity/apt-setup
+    {
+        echo "mkdir -p /target/boot/efi"
+        echo "rm -f /target/boot/efi/startup.nsh"
+        echo "touch /target/boot/efi/startup.nsh" 
+    } >> /usr/share/ubiquity/apt-setup
+    
+    # Setting up /boot/efi/startup.nsh
+    log-msg "Setting up /boot/efi/startup.nsh"
+    #ARCH=$(archdetect | awk -F "/" '{print $1}')
+    if [ "$ARCH" = "amd64" ] ; then
+    echo 'echo "fs0:\EFI\ubuntu\grubx64.efi" >> /target/boot/efi/startup.nsh' >> /usr/share/ubiquity/apt-setup
+    else
+    echo 'echo "fs0:\EFI\custom\grubia32.efi" >> /target/boot/efi/startup.nsh' >> /usr/share/ubiquity/apt-setup
+    fi
+    echo "rm -f /target/etc/gdm3/custom.conf" >> /usr/share/ubiquity/apt-setup
+    echo "rm -f /target/etc/mdm/mdm.conf" >> /usr/share/ubiquity/apt-setup
+
+    sleep 1
+
+
+    # Step 3 - Create the CD tree in $WORKDIR/ISOTMP
+    log-msg "Checking if the $WORKDIR folder has been created"
+    if [ -d "$WORKDIR/dummysys" ]; then
+        rm -rf $WORKDIR/dummysys/var/*
+        rm -rf $WORKDIR/dummysys/etc/*
+        rm -rf $WORKDIR/dummysys/run/*
+        rm -rf $WORKDIR/ISOTMP/{grub,.disk}
+    else
+        log-msg "Creating $WORKDIR folder tree"
+        mkdir -p $WORKDIR/ISOTMP/{casper,preseed}
+        mkdir -p $WORKDIR/dummysys/{dev,etc,proc,tmp,sys,mnt,media/cdrom,var}
+        rsync -a /dev/urandom $WORKDIR/dummysys/dev/
+        if [ -d /run ]; then
+            mkdir -p $WORKDIR/dummysys/run
+        fi
+        chmod ug+rwx,o+rwt $WORKDIR/dummysys/tmp
+
+    fi
+
+    log-msg "Creating $WORKDIR/ISOTMP folder tree"
+    mkdir -p $WORKDIR/ISOTMP/{install,.disk}
+
+    log-msg "Copying /var and /etc to temp area and excluding extra files  ... this will take a while so be patient"
+
+    if [ "$EXCLUDES" != "" ]; then
+        for addvar in $EXCLUDES ; do
+            # This needs looking into need command args array
+            # shellcheck disable=SC2089,SC2090
+            VAREXCLUDES="$VAREXCLUDES --exclude='$addvar' "
+        done
+    fi
+ 
+    # This needs looked into need command args array
+    # shellcheck disable=SC2086,SC2090
+    rsync --exclude='*.log.*' --exclude='*~' --exclude='*.pid' --exclude='*.bak' --exclude='*.[0-9].gz' --exclude='*.deb' --exclude='kdecache*' $VAREXCLUDES-a /var/. "$WORKDIR"/dummysys/var/.
+    # This needs looked into need command args array
+    # shellcheck disable=SC2086,SC2090
+    rsync $VAREXCLUDES-a /etc/. "$WORKDIR"/dummysys/etc/.
+
+    #Adding packages location to sources
+    #ARCH=$(archdetect | awk -F "/" '{print $1}')
+    DISKINFONAME=$(echo "$LIVECDLABEL" | awk '{print $1}')
+    log-msg "Adding CD-ROM to source list"
+    . /etc/lsb-release
+    sed -i "s/deb/#deb/g" $WORKDIR/dummysys/etc/apt/sources.list
+    sed -i '/cdrom:/d' $WORKDIR/dummysys/etc/apt/sources.list &> /dev/null
+    echo "deb cdrom:[$DISKINFONAME $DISTRIB_RELEASE - Release $ARCH]/ dists/" >> $WORKDIR/dummysys/etc/apt/sources.list
+    echo "$SOURCESLIST" >> $WORKDIR/dummysys/etc/apt/sources.list
+
+    #renaming grub config
+    log-msg "Renaming grub config"
+    #DO NOT RENAME GRUB_DISTRIBUTOR using $LIVECDLABEL it breaks UEFI Boot after install in 18.04+ BOG 20191118
+    #sed -i "s/GRUB_DISTRIBUTOR=.*/GRUB_DISTRIBUTOR=\"$LIVECDLABEL\"/g" $WORKDIR/dummysys/etc/default/grub
+    chmod 777 $WORKDIR/dummysys/etc/lsb-release
+    sed -i '/DISTRIB_DESCRIPTION/d' $WORKDIR/dummysys/etc/lsb-release &> /dev/null
+    echo "DISTRIB_DESCRIPTION=\"$LIVECDLABEL\"" >> /home/WolfLandBuilder/WolfLandBuilder/dummysys/etc/lsb-release
+
+    #Creating startup script so the installer is marked as 'Trusted' on the desktop
+    #Only do this for dist mode.
+    log-msg "Creating startup script so the installer is marked as 'Trusted' on the desktop"
+    if [ "$1" = "dist" ]; then
+        touch $WORKDIR/dummysys/etc/rc.local
+        {
+	        echo "#!/bin/sh"
+            echo "sudo -i -u $LIVEUSER dbus-run-session -- gio set /home/$LIVEUSER/Desktop/ubiquity.desktop metadata::trusted yes"
+            echo "exit 0"
+        } >> $WORKDIR/dummysys/etc/rc.local
+        chmod 755 $WORKDIR/dummysys/etc/rc.local
+        chmod +x $WORKDIR/dummysys/etc/rc.local
+    fi
+
+    #Creating Network Update Script
+    log-msg "Creating Network Update Script"
+    touch $WORKDIR/dummysys/etc/network/if-up.d/update
+    echo "#!/bin/sh" >> $WORKDIR/dummysys/etc/network/if-up.d/update
+    echo "apt-get update" >> $WORKDIR/dummysys/etc/network/if-up.d/update
+    chmod 755 $WORKDIR/dummysys/etc/network/if-up.d/update
+    chmod +x $WORKDIR/dummysys/etc/network/if-up.d/update
+
+    log-msg "Cleaning up files not needed for the live in $WORKDIR/dummysys"
+    rm -rf $WORKDIR/dummysys/etc/apt/sources.list.d/*.save &> /dev/null
+    rm -rf $WORKDIR/dummysys/etc/apt/apt.conf.d/* &> /dev/null
+    rm -rf $WORKDIR/dummysys/etc/apt/preferences.d/* &> /dev/null
+    rm -rf $WORKDIR/dummysys/var/lib/apt/lists/* -vf &> /dev/null
+    rm -rf $WORKDIR/dummysys/var/lib/apt/lists/lock &> /dev/null
+    find $WORKDIR/dummysys/var/cache/apt -type f -exec rm -rf '{}' \; &> /dev/null
+    find $WORKDIR/dummysys/var/cache/apt-xapian-index -type f -exec rm -rf '{}' \; &> /dev/null
+    find $WORKDIR/dummysys/var/lib/apt -type f -exec rm -rf '{}' \; &> /dev/null
+    rm -rf $WORKDIR/dummysys/var/lib/ureadahead/pack &> /dev/null
+    rm -f $WORKDIR/dummysys/etc/X11/xorg.conf*
+    rm -f $WORKDIR/dummysys/etc/{hostname,mtab*,fstab}
+    if [ ! -L $WORKDIR/dummysys/etc/resolv.conf ]; then
+        rm -f $WORKDIR/dummysys/etc/resolv.conf
+    fi
+    rm -f $WORKDIR/dummysys/etc/udev/rules.d/70-persistent*
+    rm -f $WORKDIR/dummysys/etc/cups/ssl/{server.crt,server.key}
+    rm -f $WORKDIR/dummysys/etc/ssh/*key*
+    rm -f $WORKDIR/dummysys/var/lib/dbus/machine-id
+    rsync -a /dev/urandom $WORKDIR/dummysys/dev/
+    find $WORKDIR/dummysys/var/log/ $WORKDIR/dummysys/var/lock/ $WORKDIR/dummysys/var/backups/ $WORKDIR/dummysys/var/tmp/ $WORKDIR/dummysys/var/crash/ $WORKDIR/dummysys/var/lib/ubiquity/ -type f -exec rm -f {} \;
+
+    if [ "$1" = "dist" ]; then
+
+        rm -f $WORKDIR/dummysys/etc/{group,passwd,shadow,shadow-,gshadow,gshadow-}
+        rm -f $WORKDIR/dummysys/etc/wicd/{wired-settings.conf,wireless-settings.conf}
+        rm -rf $WORKDIR/dummysys/etc/NetworkManager/system-connections/*
+        rm -f $WORKDIR/dummysys/etc/printcap
+        rm -f $WORKDIR/dummysys/etc/cups/printers.conf
+        touch $WORKDIR/dummysys/etc/printcap
+        touch $WORKDIR/dummysys/etc/cups/printers.conf
+        rm -rf $WORKDIR/dummysys/var/cache/gdm3/*
+        rm -rf $WORKDIR/dummysys/var/lib/sudo/*
+        rm -rf $WORKDIR/dummysys/var/lib/AccountsService/users/*
+	    rm -rf $WORKDIR/dummysys/var/lib/kdm/*
+        rm -rf $WORKDIR/dummysys/var/run/console/*
+        rm -f $WORKDIR/dummysys/etc/gdm3/gdm3.conf-custom
+        rm -rf $WORKDIR/dummysys/etc/apt/sources.list.d/*
+        cp -a /etc/WolfLandBuilder/scripts/logo $WORKDIR/dummysys/etc/cron.hourly
+        chmod +x $WORKDIR/dummysys/etc/cron.hourly/logo
+        chmod 755 $WORKDIR/dummysys/etc/cron.hourly/logo
+        #Setting up auto timed login for gdm3
+        cp -a /etc/WolfLandBuilder/gdm3 $WORKDIR/dummysys/etc/
+        sed -i "s/LIVEUSER/$LIVEUSER/g" $WORKDIR/dummysys/etc/gdm3/custom.conf
+        chmod +x $WORKDIR/dummysys/etc/gdm3/custom.conf
+        chmod 755 $WORKDIR/dummysys/etc/gdm3/custom.conf
+        #Setting up auto timed login for MDM
+        cp -a /etc/WolfLandBuilder/mdm $WORKDIR/dummysys/etc/
+        sed -i "s/LIVEUSER/$LIVEUSER/g" $WORKDIR/dummysys/etc/mdm/mdm.conf
+        chmod +x $WORKDIR/dummysys/etc/mdm/mdm.conf
+        chmod 755 $WORKDIR/dummysys/etc/mdm/mdm.conf
+        if [ ! -d /run ]; then
+		find $WORKDIR/dummysys/var/run/ $WORKDIR/dummysys/var/mail/ $WORKDIR/dummysys/var/spool/ -type f -exec rm -f {} \;
+	else
+		find $WORKDIR/dummysys/var/mail/ $WORKDIR/dummysys/var/spool/ -type f -exec rm -f {} \;
+		unlink $WORKDIR/dummysys/var/run
+
+		cd $WORKDIR/dummysys/var || exit 1
+		ln -sf ../run run
+	fi
+        for i in dpkg.log lastlog mail.log syslog auth.log daemon.log faillog lpr.log mail.warn user.log boot debug mail.err messages wtmp bootstrap.log dmesg kern.log mail.info
+        do
+            touch $WORKDIR/dummysys/var/log/${i}
+        done
+
+        log-msg "Cleaning up passwd, group, shadow and gshadow files for the live system"
+        grep '^[^:]*:[^:]*:[0-9]:' /etc/passwd > $WORKDIR/dummysys/etc/passwd
+        {
+            grep '^[^:]*:[^:]*:[0-9][0-9]:' /etc/passwd
+            grep '^[^:]*:[^:]*:[0-9][0-9][0-9]:' /etc/passwd
+            grep '^[^:]*:[^:]*:[3-9][0-9][0-9][0-9][0-9]:' /etc/passwd 
+         }  >> $WORKDIR/dummysys/etc/passwd
+
+        grep '^[^:]*:[^:]*:[0-9]:' /etc/group > $WORKDIR/dummysys/etc/group
+        {
+            grep '^[^:]*:[^:]*:[0-9][0-9]:' /etc/group
+            grep '^[^:]*:[^:]*:[0-9][0-9][0-9]:' /etc/group
+            grep '^[^:]*:[^:]*:[3-9][0-9][0-9][0-9][0-9]:' /etc/group
+        } >> $WORKDIR/dummysys/etc/group
+        #Add Liveuser to groups
+
+        grep '^[^:]*:[^:]*:[5-9][0-9][0-9]:' /etc/passwd | awk -F ":" '{print $1}'> $WORKDIR/tmpusers1
+        grep '^[^:]*:[^:]*:[1-9][0-9][0-9][0-9]:' /etc/passwd | awk -F ":" '{print $1}'> $WORKDIR/tmpusers2
+        grep '^[^:]*:[^:]*:[1-2][0-9][0-9][0-9][0-9]:' /etc/passwd | awk -F ":" '{print $1}'> $WORKDIR/tmpusers3
+
+        cat $WORKDIR/tmpusers1 $WORKDIR/tmpusers2 $WORKDIR/tmpusers3 > $WORKDIR/tmpusers
+        rm -f $WORKDIR/tmpusers[0-9] &> /dev/null
+
+        # This needs looked into
+        # shellcheck disable=SC2002
+        cat $WORKDIR/tmpusers | while read -r LINE ;do
+
+            echo "$LINE" | xargs -I{} sed -e 's/,{}$//g' "$WORKDIR"/dummysys/etc/group > "$WORKDIR"/dummysys/etc/group.new1
+            echo "$LINE" | xargs -I{} sed -e 's/,{},/,/g' "$WORKDIR"/dummysys/etc/group.new1 > "$WORKDIR"/dummysys/etc/group.new2
+            echo "$LINE" | xargs -I{} sed -e 's/:{}$/:/g' "$WORKDIR"/dummysys/etc/group.new2 > "$WORKDIR"/dummysys/etc/group.new3
+            echo "$LINE" | xargs -I{} sed -e 's/:{},/:/g' "$WORKDIR"/dummysys/etc/group.new3 > "$WORKDIR"/dummysys/etc/group
+
+            rm -f $WORKDIR/dummysys/etc/group.new* &> /dev/null
+
+        done
+
+    fi
+
+
+    # make sure the adduser and autologin functions of casper as set according to the mode
+    log-msg "Making sure adduser and autologin functions of casper are set properly"
+    [ "$1" = "dist" ] && [ ! -d $WORKDIR/dummysys/home ] && mkdir $WORKDIR/dummysys/home
+    [ "$1" = "dist" ] && chmod 755 /usr/share/initramfs-tools/scripts/casper-bottom/*adduser /usr/share/initramfs-tools/scripts/casper-bottom/*autologin /usr/share/initramfs-tools/scripts/casper
+
+    # copy over some of the necessary stuff for the livecd
+
+    #copy any preseed files
+    log-msg "Copying any preseed files"
+    cp /etc/WolfLandBuilder/preseed/* $WORKDIR/ISOTMP/preseed/
+
+    #BOOT Type is eltorito
+    log-msg "Copying memtest86+ and splash image for the live system"
+    cp /boot/memtest86+.bin $WORKDIR/ISOTMP/install/memtest
+    cp /boot/grub_linux_lite.png $WORKDIR/ISOTMP/install/
+
+    #EFI BOOT
+    #log-msg "Copying EFI Boot for the live system"
+    cp -a /usr/share/cd-boot-images-amd64/tree/boot $WORKDIR/ISOTMP/boot
+    cp -a /usr/share/cd-boot-images-amd64/tree/EFI $WORKDIR/ISOTMP/EFI
+    cp /usr/share/cd-boot-images-amd64/images/boot/grub/i386-pc/boot_hybrid.img $WORKDIR/ISOTMP/boot/grub/i386-pc
+    cp /usr/share/cd-boot-images-amd64/images/boot/grub/efi.img $WORKDIR/ISOTMP/boot/grub
+    
+    #cp $WORKDIR/ISOTMP/EFI/BOOT/BOOTx64.EFI $WORKDIR/ISOTMP/EFI/BOOT/fallback.efi
+    cp /usr/lib/WolfLandBuilder/boot/grub/grub.cfg $WORKDIR/ISOTMP/boot/grub/grub.cfg
+    cp /usr/lib/WolfLandBuilder/boot/grub/loopback.cfg $WORKDIR/ISOTMP/boot/grub/loopback.cfg
+    sed -i "s/__LIVECDLABEL__/$LIVECDLABEL/g" $WORKDIR/ISOTMP/boot/grub/grub.cfg
+    sed -i "s/__LIVECDLABEL__/$LIVECDLABEL/g" $WORKDIR/ISOTMP/boot/grub/loopback.cfg
+
+    #Downloading packages for offline install
+    log-msg "Downloading packages for CD"
+
+    # Check Architecture
+    #ARCH=$(archdetect | awk -F "/" '{print $1}')
+
+    mkdir -p $WORKDIR/ISOTMP/pool
+    cd $WORKDIR/ISOTMP/pool  || exit 1
+    log-msg "Update source list again because previously we clean apt cache to copy system folders to dummysys"
+    apt-get update &> /dev/null
+    log-msg "Downloading packages needed for offline install"
+    if [ "$ARCH" = "amd64" ] ; then
+    apt-get download efibootmgr b43-fwcutter bcmwl-kernel-source grub-efi grub-efi-amd64 grub-efi-amd64-bin grub-efi-amd64-signed grub-efi-ia32 grub-efi-ia32-bin mokutil oem-config=60.04.15 oem-config-gtk=60.04.15 oem-config-slideshow-ubuntu=681 shim shim-signed &> /dev/null
+    else
+    apt-get download efibootmgr b43-fwcutter bcmwl-kernel-source grub-efi grub-efi-ia32 grub-efi-ia32-bin mokutil oem-config=60.04.15 oem-config-gtk=60.04.15 oem-config-slideshow-ubuntu=681 &> /dev/null
+    fi
+    mkdir -p $WORKDIR/ISOTMP/dists
+    cd $WORKDIR/ISOTMP/  || exit 1
+    dpkg-scanpackages pool /dev/null | gzip -9c > dists/Packages.gz
+    apt-ftparchive release ./dists > ./dists/Release
+
+    cat > $WORKDIR/ISOTMP/README.diskdefines <<FOO
+#define DISKNAME  $LIVECDLABEL
+#define TYPE  binary
+#define TYPEbinary  1
+#define ARCH  $ARCH
+#define ARCH$ARCH  1
+#define DISKNUM  1
+#define DISKNUM1  1
+#define TOTALNUM  0
+#define TOTALNUM0  1
+FOO
+    cp $WORKDIR/ISOTMP/README.diskdefines $WORKDIR/ISOTMP/casper/README.diskdefines
+
+    sleep 1
+
+    # Step 4 - Make the filesystem.manifest and filesystem.manifest-desktop
+    log-msg "Creating filesystem.manifest and filesystem.manifest-desktop"
+    dpkg-query -W --showformat='${Package} ${Version}\n' > $WORKDIR/ISOTMP/casper/filesystem.manifest
+
+    cp $WORKDIR/ISOTMP/casper/filesystem.manifest $WORKDIR/ISOTMP/casper/filesystem.manifest-desktop
+    # Suggested by lkjoel from Ubuntu Forums - Joel Leclerc to remove the frontend so the Install menu item is not on the installed system
+    sed -i '/ubiquity-frontend/d' $WORKDIR/ISOTMP/casper/filesystem.manifest-desktop
+
+    sleep 1
+
+    # Step 5 - Prepare casper.conf
+    log-msg "Preparing casper.conf file"
+
+        LIVEUSER=$(who -u | grep -v root | cut -d " " -f1| uniq)
+        if [ "$(who -u | grep -v root | cut -d " " -f1| uniq | wc -l)" != "1" ]; then
+            LIVEUSER=$(grep '^[^:]*:[^:]*:1000:' /etc/passwd | awk -F ":" '{ print $1 }')
+        fi
+        if [ "$LIVEUSER" = "" ]; then
+            log-msg "Can't determine which user to use. Please logoff all users except for your main user and try again. Exiting."
+            exit 1
+        fi
+        
+    log-msg "Creating the casper.conf file."
+    # Added FLAVOUR= as the new casper live boot will make it the first word from the Live CD Name if FLAVOUR is not set
+    cat > /etc/casper.conf <<FOO
+# This file should go in /etc/casper.conf
+# Supported variables are:
+# USERNAME, USERFULLNAME, HOST, BUILD_SYSTEM
+
+export USERNAME="$LIVEUSER"
+export USERFULLNAME="Live session user"
+export HOST="$LIVEUSER"
+export BUILD_SYSTEM="Ubuntu"
+export FLAVOUR="$LIVEUSER"
+FOO
+    cp /etc/casper.conf $WORKDIR/dummysys/etc/
+
+    sleep 1
+
+    log-msg "Setting up casper and ubiquity options for $1 mode"
+
+    # make a new initial ramdisk including the casper scripts
+    log-msg "Creating a new initial ramdisk for the live system"
+    mkinitramfs -o /boot/initrd.img-"$(uname -r)" "$(uname -r)"
+
+    log-msg "Copying your kernel and initrd for the livecd"
+    cp /boot/vmlinuz-"$(uname -r)" "$WORKDIR"/ISOTMP/casper/vmlinuz
+    cp /boot/initrd.img-"$(uname -r)" "$WORKDIR"/ISOTMP/casper/initrd.gz
+    if [ ! -f "$WORKDIR"/ISOTMP/casper/vmlinuz ]; then
+        log-msg "Missing valid kernel. Exiting"
+        exit 1
+    fi
+    if [ ! -f "$WORKDIR"/ISOTMP/casper/initrd.gz ]; then
+        log-msg "Missing valid initial ramdisk. Exiting"
+        exit 1
+    fi
+
+    # Step 6 - Make filesystem.squashfs
+
+    if [ -f $WORKDIR/ISOTMP/casper/filesystem.squashfs ]; then
+        rm -f $WORKDIR/ISOTMP/casper/filesystem.squashfs &> /dev/null
+    fi
+
+    log-msg "Creating filesystem.squashfs   ... this will take a while so be patient"
+
+    REALFOLDERS=""
+    
+    # This needs looked at
+    #shellcheck disable=SC2045,SC2010
+    for d in $(ls -d $WORKDIR/dummysys/*); do
+        REALFOLDERS="$REALFOLDERS $d"
+    done
+
+    # This needs looked at
+    # shellcheck disable=SC2010
+    for d in $(ls / | grep -v etc | grep -v run | grep -v tmp | grep -v sys | grep -v var | grep -v dev | grep -v media | grep -v mnt | grep -v lost+found | grep -v proc | grep -v home); do
+        REALFOLDERS="$REALFOLDERS /$d"
+    done
+    
+    # Remove "no-duplicates" from mksquashfs line. BOG 20190315
+    # Needs looked at another command args array issue
+    # shellcheck disable=SC2086
+    mksquashfs $REALFOLDERS $WORKDIR/ISOTMP/casper/filesystem.squashfs $SQUASHFSOPTS -e /boot/efi/EFI /boot/grub $BASEWORKDIR $EXCLUDES 2>> $WORKDIR/"$CUSTOMLOG.log"
+
+
+    sleep 1
+
+    #add some stuff the log in case of problems so I can troubleshoot it easier
+    echo "Updating the $CUSTOMLOG.log"
+    {
+    echo "------------------------------------------------------"
+    echo "Mount information"
+    mount
+    echo "------------------------------------------------------"
+    echo "Disk size information"
+    df -h
+    echo "------------------------------------------------------"
+    echo "Casper Script info"
+    ls -l /usr/share/initramfs-tools/scripts/casper-bottom/
+    echo "------------------------------------------------------"
+    echo "/etc/WolfLandBuilder.conf info"
+    cat /etc/WolfLandBuilder.conf
+    echo "------------------------------------------------------"
+    echo "/etc/casper.conf info"
+    cat /etc/casper.conf
+    echo "------------------------------------------------------"
+    echo "/etc/passwd info"
+    cat $WORKDIR/dummysys/etc/passwd
+    echo "------------------------------------------------------"
+    echo "/etc/group info"
+    cat $WORKDIR/dummysys/etc/group
+    echo "------------------------------------------------------"
+    echo "/etc/X11/default-display-manager info"
+    cat $WORKDIR/dummysys/etc/X11/default-display-manager
+    echo "------------------------------------------------------"
+    echo "/etc/skel info"
+    find /etc/skel
+    echo "------------------------------------------------------"
+    echo "lsb-release info"
+    cat $WORKDIR/dummysys/etc/lsb-release
+    echo "------------------------------------------------------"
+    echo "WolfLandBuilder version info"
+    cat $WORKDIR/dummysys/etc/WolfLandBuilder/WolfLandBuilder.version
+    echo "------------------------------------------------------"
+    echo "ISOTMP info"
+    ls -Rl $WORKDIR/ISOTMP
+    echo "------------------------------------------------------"
+    echo "$WORKDIR/tmpusers info"
+    cat $WORKDIR/tmpusers
+    echo "------------------------------------------------------"
+    echo "Command-line options = $*"
+    echo "------------------------------------------------------"
+    } >>$WORKDIR/"$CUSTOMLOG.log"
+
+    #remove frontend from the system so the Install menu item does not appear.
+    log-msg "Removing the ubiquity frontend as it has been included and is not needed on the normal system"
+    apt-get -y -q remove ubiquity-frontend-kde &> /dev/null
+    apt-get -y -q remove ubiquity-frontend-gtk &> /dev/null
+    apt-get -y -q remove ubiquity-ubuntu-artwork &> /dev/null
+    rm -rf /root/apt.tar.gz
+    apt-get install -y "$(check-language-support)" &> /dev/null
+    
+    sleep 1
+
+    #checking the size of the compressed filesystem to ensure it meets the iso9660 spec for a single file"
+    # Needs looked into
+    # shellcheck disable=SC2012
+    SQUASHFSSIZE=$(ls -s $WORKDIR/ISOTMP/casper/filesystem.squashfs | awk -F " " '{print $1}')
+    if [ "$SQUASHFSSIZE" -gt "3999999" ]; then
+        log-msg "The compressed filesystem size $SQUASHFSSIZE is larger than SquashFS allows for a single file. Reduce the amount of data you are backing up and try again."
+        exit 1
+    fi
+
+    #add filesystem size for lucid
+    log-msg "Calculating the installed filesystem size for the installer"
+
+    unsquashfs -lls $WORKDIR/ISOTMP/casper/filesystem.squashfs | grep -v " inodes " | grep -v "unsquashfs:" | awk '{print $3}' | grep -v "," > /tmp/size.tmp
+
+    # Needs looked into
+    # shellcheck disable=SC2013
+    for i in $(cat /tmp/size.tmp); do a=$((a+i)); done
+    echo $a > $WORKDIR/ISOTMP/casper/filesystem.size
+
+    log-msg "Removing WolfLandBuilder-firstboot from system startup"
+    update-rc.d -f WolfLandBuilder-firstboot remove
+    chmod 644 /etc/init.d/WolfLandBuilder-firstboot
+
+}
+
+iso (){
+	# Tell shellcheck to ignore.. use of "which" is OK.
+    # shellcheck disable=SC2230
+    CREATEISO=$(which xorriso)
+    if [ "$CREATEISO" = "" ]; then
+    # Tell shellcheck to ignore.. use of "which" is OK.
+    # shellcheck disable=SC2230
+        CREATEISO=$(which genisoimage)
+    fi
+
+    # check to see if the cd filesystem exists
+
+    if [ ! -f "$WORKDIR/ISOTMP/casper/filesystem.squashfs" ]; then
+        log-msg "The filesystem.squashfs filesystem is missing.  Either there was a problem creating the compressed filesystem or you are trying to run sudo WolfLandBuilder dist iso before sudo WolfLandBuilder dist cdfs"
+        exit 1
+    fi
+    
+    # Needs looked into
+    # shellcheck disable=SC2012
+    SQUASHFSSIZE=$(ls -s $WORKDIR/ISOTMP/casper/filesystem.squashfs | awk -F " " '{print $1}')
+    if [ "$SQUASHFSSIZE" -gt "3999999" ]; then
+        log-msg "The compressed filesystem size $SQUASHFSSIZE is larger than genisoimage allows for a single file. Reduce the amount of data you are backing up and try again."
+        exit 1
+    fi
+
+    #Step 6.5 - Added by Tim Farley. Make ISO compatible with Ubuntu Startup Disk Creator (Karmic).
+    log-msg "Making disk compatible with Ubuntu Startup Disk Creator."
+    . /etc/lsb-release
+    touch $WORKDIR/ISOTMP/ubuntu
+    touch $WORKDIR/ISOTMP/.disk/base_installable
+    echo "full_cd/single" > $WORKDIR/ISOTMP/.disk/cd_type
+    # starting with 12.04 need to have correct ubuntu version or startup disk creator uses syslinux-legacy which won't work
+    DISKINFONAME=$(echo "$LIVECDLABEL" | awk '{print $0}')
+    echo "$DISKINFONAME" - Release "$ARCH" > "$WORKDIR/ISOTMP"/.disk/info
+    echo "$LIVECDURL" > $WORKDIR/ISOTMP/.disk/release_notes_url
+    # Step 7 - Make md5sum.txt for the files on the livecd - this is used during the
+    # checking function of the livecd
+    log-msg "Creating md5sum.txt for the livecd/dvd"
+    cd $WORKDIR/ISOTMP && find . -type f -print0 | xargs -0 md5sum > md5sum.txt
+
+    sleep 1
+
+    # Step 8 - Make the ISO file
+    log-msg "Creating $CUSTOMISO in $WORKDIR"
+    # shellcheck disable=SC2086
+    $CREATEISO -as mkisofs -V "$LIVECDLABEL" -J -joliet-long -l -b boot/grub/i386-pc/eltorito.img -no-emul-boot -boot-load-size 4 -boot-info-table --grub2-boot-info --grub2-mbr boot/grub/i386-pc/boot_hybrid.img -append_partition 2 0xef boot/grub/efi.img -appended_part_as_gpt --mbr-force-bootable -eltorito-alt-boot -e --interval:appended_partition_2:all:: -no-emul-boot -partition_offset 16 -o $WORKDIR/$CUSTOMISO "$WORKDIR/ISOTMP" 2>>$WORKDIR/"$CUSTOMLOG.log" 1>>$WORKDIR/"$CUSTOMLOG.log"
+    if [ ! -f "$WORKDIR/$CUSTOMISO" ]; then
+        log-msg "The iso was not created. There was a problem. Exiting"
+        exit 1
+    fi
+
+    # create the md5 sum file so the user doesn't have to - this is good so the iso
+    # file can later be tested to ensure it hasn't become corrupted
+
+    log-msg "Creating $CUSTOMISO.md5 in $WORKDIR"
+
+    cd $WORKDIR  || exit 1
+    md5sum "$CUSTOMISO" > "$CUSTOMISO.md5"
+
+    sleep 1
+
+    log-msg "Creating $CUSTOMISO.sha256 in $WORKDIR"
+
+    cd $WORKDIR  || exit 1
+    sha256sum "$CUSTOMISO" > "$CUSTOMISO.sha256"
+
+    sleep 1
+
+    # shellcheck disable=SC2012
+    ISOSIZE=$(ls -hs "$WORKDIR/$CUSTOMISO" | awk '{print $1}')
+
+    log-msg "$WORKDIR/$CUSTOMISO which is $ISOSIZE ($SQUASHFSSIZE) in size is ready to be burned or tested in a virtual machine."
+
+}
+
+# check to see if either iso or cdfs options have been invoked and proceed accordingly
+
+
+case $2 in
+    iso )
+        iso "$@"
+    ;;
+    cdfs )
+        cdfs "$@"
+    ;;
+    * )
+        cdfs "$@"
+        iso "$@"
+    ;;
+esac
+
+
+
+
+exit 0

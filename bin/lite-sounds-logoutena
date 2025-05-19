@@ -1,0 +1,35 @@
+#!/bin/bash
+#--------------------------------------------
+# Description: Linux Lite Sounds Dialogue
+# Enable Logout Sound
+# Authors: Jerry Bezencon
+# Website: https://www.linuxliteos.com
+#--------------------------------------------
+
+# Variables
+APPNAME="Lite Sounds - Enable Logout Sound"
+ic="/usr/share/icons/Papirus/24x24/apps/litesoundsglob.png"		# dialog icon 24x24 PNG
+EALUSER=$(whoami)
+TMPF="/tmp/autologin"
+if [ ! -f "$TMPF" ]; then echo "$EALUSER" > "$TMPF"; chmod 600 "$TMPF"; else :; fi
+if [ $EUID -ne 0 ]; then pkexec $0; if [ "${PIPESTATUS[@]}" -eq "126" ]; then rm -f "$TMPF"; fi; exit; else :; fi
+
+# Main window dialogue.
+zenity --question --icon-name="info" --window-icon="$ic" --ok-label="Enable Logout Sound" --cancel-label="Cancel" --width="400" --height="60" --title="$APPNAME" \
+       --text='<span font="12">You are about to Enable the Logout Sound</span>\n\
+Click <b>Enable Logout Sound</b> to continue or <b>Cancel</b> to exit.' 2>/dev/null
+
+if [ "$?" -eq "0" ]; then
+    mv /usr/local/bin/xfce4-session.disabled /usr/local/bin/xfce4-session
+        if [ "${PIPESTATUS[0]}" -eq "0" ]; then
+                zenity --info --width="280" --timeout=5 --height=40 --title="   $APPNAME" --window-icon=$ic --text="\nLogout Sound has been enabled." 2>/dev/null
+                exit 0
+        else
+                zenity --info --width="300" --height="40" --title="$APPNAME" --text="\nThe Logout Sound may already be enabled." 2>/dev/null
+                continue
+        fi
+else
+    exit 0
+fi
+done
+exit 0

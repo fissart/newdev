@@ -1,7 +1,7 @@
 /* This example requires Tailwind CSS v2.0+ */
 import logo from '../logo.png';
-import { Fragment } from 'react'
-import { Popover, Transition } from '@headlessui/react'
+// import { Fragment } from 'react'
+// import { Popover, Transition } from '@headlessui/react'
 import {
   BookmarkAltIcon,
   CalendarIcon,
@@ -12,78 +12,79 @@ import {
   PlayIcon,
   RefreshIcon,
   ShieldCheckIcon,
-  SupportIcon,
+  ChatIcon,
   ViewGridIcon,
   XIcon
 } from '@heroicons/react/outline'
-import { ChevronDownIcon } from '@heroicons/react/solid'
+// import { ChevronDownIcon } from '@heroicons/react/solid'
+// import { Button } from 'antd';
 
-const features = [
-  {
-    name: 'Analytics',
-    href: '#',
-    description: 'Get a better understanding of where your traffic is coming from.',
-    icon: ChartBarIcon
-  },
-  {
-    name: 'Engagement',
-    href: '#',
-    description: 'Speak directly to your customers in a more meaningful way.',
-    icon: CursorClickIcon
-  },
-  { name: 'Security', href: '#', description: "Your customers' data will be safe and secure.", icon: ShieldCheckIcon },
-  {
-    name: 'Integrations',
-    href: '#',
-    description: "Connect with third-party tools that you're already using.",
-    icon: ViewGridIcon
-  },
-  {
-    name: 'Automations',
-    href: '#',
-    description: 'Build strategic funnels that will drive your customers to convert',
-    icon: RefreshIcon
-  }
-]
-const callsToAction = [
-  { name: 'Watch Demo', href: '#', icon: PlayIcon },
-  { name: 'Contact Sales', href: '#', icon: PhoneIcon }
-]
-const resources = [
-  {
-    name: 'Help Center',
-    description: 'Get all of your questions answered in our forums or contact support.',
-    href: '#',
-    icon: SupportIcon
-  },
-  {
-    name: 'Guides',
-    description: 'Learn how to maximize our platform to get the most out of it.',
-    href: '#',
-    icon: BookmarkAltIcon
-  },
-  {
-    name: 'Events',
-    description: 'See what meet-ups and other events we might be planning near you.',
-    href: '#',
-    icon: CalendarIcon
-  },
-  { name: 'Security', description: 'Understand how we take your privacy seriously.', href: '#', icon: ShieldCheckIcon }
-]
-const recentPosts = [
-  { id: 1, name: 'Boost your conversion rate', href: '#' },
-  { id: 2, name: 'How to use search engine optimization to drive traffic to your site', href: '#' },
-  { id: 3, name: 'Improve your customer experience', href: '#' }
-]
+// const features = [
+//   {
+//     name: 'Analytics',
+//     href: '#',
+//     description: 'Get a better understanding of where your traffic is coming from.',
+//     icon: ChartBarIcon
+//   },
+//   {
+//     name: 'Engagement',
+//     href: '#',
+//     description: 'Speak directly to your customers in a more meaningful way.',
+//     icon: CursorClickIcon
+//   },
+//   { name: 'Security', href: '#', description: "Your customers' data will be safe and secure.", icon: ShieldCheckIcon },
+//   {
+//     name: 'Integrations',
+//     href: '#',
+//     description: "Connect with third-party tools that you're already using.",
+//     icon: ViewGridIcon
+//   },
+//   {
+//     name: 'Automations',
+//     href: '#',
+//     description: 'Build strategic funnels that will drive your customers to convert',
+//     icon: RefreshIcon
+//   }
+// ]
+// const callsToAction = [
+//   { name: 'Watch Demo', href: '#', icon: PlayIcon },
+//   { name: 'Contact Sales', href: '#', icon: PhoneIcon }
+// ]
+// const resources = [
+//   {
+//     name: 'Help Center',
+//     description: 'Get all of your questions answered in our forums or contact support.',
+//     href: '#',
+//     icon: SupportIcon
+//   },
+//   {
+//     name: 'Guides',
+//     description: 'Learn how to maximize our platform to get the most out of it.',
+//     href: '#',
+//     icon: BookmarkAltIcon
+//   },
+//   {
+//     name: 'Events',
+//     description: 'See what meet-ups and other events we might be planning near you.',
+//     href: '#',
+//     icon: CalendarIcon
+//   },
+//   { name: 'Security', description: 'Understand how we take your privacy seriously.', href: '#', icon: ShieldCheckIcon }
+// ]
+// const recentPosts = [
+//   { id: 1, name: 'Boost your conversion rate', href: '#' },
+//   { id: 2, name: 'How to use search engine optimization to drive traffic to your site', href: '#' },
+//   { id: 3, name: 'Improve your customer experience', href: '#' }
+// ]
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
-}
+// function classNames(...classes) {
+//   return classes.filter(Boolean).join(' ')
+// }
 
 export default function Example() {
   return (
-    <div className="relative bg-gray-50">
-      <Popover className="relative bg-white shadow">
+    <div>
+      {/* <Popover className="relative bg-white shadow">
         {({ open }) => (
           <>
             <div className="max-w-7xl mx-auto px-4 px-6">
@@ -311,68 +312,145 @@ export default function Example() {
             </Transition>
           </>
         )}
-      </Popover>
+      </Popover> */}
 
-      <main>
-        <div className="mx-auto max-w-7xl w-full pt-16 pb-20 text-center">
-          <header style={{ backgroundColor: 'rgb(215,215,218)', textAlign:'center', display: 'flex',
-  justifyContent: 'center', alignItems: 'center' }} >
-            <img src={logo} className="" alt="logo" />
-          </header>
-          <div className="px-4 px-8">
-            <h1 className="text-4xl tracking-tight font-extrabold text-gray-900 text-5xl">
-              <span className="block">Escuela Superior de Formación
-                Artística Felipe Guamán Poma de Ayala</span> <span className="block text-indigo-600">ESFAPA Ayacucho</span>
-            </h1>
-            <p className="mt-3 max-w-md mx-auto text-lg text-gray-500 text-xl">
-              Escuela Superior de Formación Artística pública de formación profesional en artes visuales desarrollado en un plan de estudios de 5 años ubicado en la ciudad de Ayacucho.
-            </p>
-            <div className="mt-10 flex justify-center">
-              <div className="mt-3 rounded-md shadow mt-0 ml-3">
-                <a
-                  href="/nosotros" Target="_blank"
-                  className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
-                  Saber más
-                </a>
+      <div style={{ textAlign: "center" }}>
+        <div className="">
+          <div className="">
+            <div className="">
+              <div className="">
+                <div className="">
+                  {/* <img class="img-fluid rounded w-50" [src]="src" (error)="onImgError($event)"
+									alt="img" /> */}
+                </div>
+                <p className="">
+                  ESCUELA SUPERIOR DE FORMACIÓN ARTÍSTICA
+                </p>
+                <p className="">
+                  "Felipe Guamán Poma de Ayala"
+                </p>
+
+                <div></div>
               </div>
-              <div className="mt-3 rounded-md shadow mt-0 ml-3">
-                <a
-                  href="#"
-                  className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-indigo-600 bg-indigo hover:bg-gray-590">
-                  Live demo
+
+              <div className="">
+
+                <div>
+                  <i className="text-secondary fa fa-map-marker fa-2x"></i>
+                  <p>Ayacucho</p>
+                </div>
+                <div>
+                  <i className="text-secondary fa fa-phone fa-2x"></i>
+                  <p>https://www.esfapa.edu.pe</p>
+                </div>
+                <p>
+                  Teléfono: 066-287499
+                </p>
+                <div>
+                  <p className="text-info">©Copyright ESFA Ayacucho 2025</p>
+                </div>
+                <div>
+                  <i className="text-secondary fa fa-envelope fa-2x"></i>
+                  <p>
+                    <a className="text-secondary" href="wwwww"></a>
+                  </p>
+                </div>
+              </div>
+
+              <div className="container text-center p-1 col-md-6 col-lg-4 col-xl-4">
+                <p className="text-center">
+                  Jr. Mariano Melgar Nº 398, Distrito Jesús Nazareno Huamanga, Ayacucho
+                </p>
+
+                <a className="text-dark" style={{ margin: ".1cm;" }} target="_blank"
+                  href="https://api.whatsapp.com/send?phone=+51 966999215&text=Hola%20bienvenido">
+                  <ChatIcon style={{ width: ".9cm", color: "orange" }} />
+                </a>
+                <a className="text-dark" style={{ margin: ".1cm;" }} target="_blank"
+                  href="https://m.me/bellasartes.ayacucho">
+                  <PhoneIcon style={{ width: ".9cm", color: "orange" }} />
+                </a>
+                <a className="text-dark" style={{ margin: ".1cm;" }} target="_blank"
+                  href="https://bellasartes.blogspot.com">
+                  <ShieldCheckIcon style={{ width: ".9cm", color: "orange" }} />
+                </a>
+                <a className="text-dark" style={{ margin: ".1cm;" }} target="_blank"
+                  href="https://web.facebook.com/bellasartes.ayacucho">
+                  <PlayIcon style={{ width: ".9cm", color: "orange" }} />
+                </a>
+                <a className="text-dark" style={{ margin: ".1cm;" }} target="_blank"
+                  href="https://instagram.com/bellasartes.ayacucho">
+                  <RefreshIcon style={{ width: ".9cm", color: "orange" }} />
+                </a>
+                <a className="text-dark" style={{ margin: ".1cm;" }} target="_blank"
+                  href="https://www.tiktok.com/@bellasartes.ayacucho">
+                  <CursorClickIcon style={{ width: ".9cm", color: "orange" }} />
+                </a>
+                <a className="text-dark" style={{ margin: ".1cm;" }} target="_blank"
+                  href="https://www.youtube.com/channel/UCkYf1NyZ1kUl3965WgeL6rw">
+                  <BookmarkAltIcon style={{ width: ".9cm", color: "orange" }} />
                 </a>
               </div>
             </div>
           </div>
         </div>
-        <div className="relative w-full h-64 h-72">
-          <img
-            className="absolute inset-0 w-full h-full object-cover"
+        <header style={{
+          textAlign: 'center', display: 'flex',
+          justifyContent: 'center', alignItems: 'center'
+        }} >
+          <img src={logo} className="App-logowww" alt="logo" />
+        </header>
+        <div className="">
+          <h1 className="">
+            <span className="">Escuela Superior de Formación
+              Artística Felipe Guamán Poma de Ayala</span> <span className="">ESFAPA Ayacucho</span>
+          </h1>
+          <p className="">
+            Escuela Superior de Formación Artística pública de formación profesional en artes visuales desarrollado en un plan de estudios de 5 años ubicado en la ciudad de Ayacucho.
+          </p>
+          <div style={{ padding: '.1cm', textAlign: 'center', margin: 'auto', display: 'block' }}>
+            <div className="">
+              <buton><a
+                href="/nosotros" Target="_blank"
+                className="">
+                Saber más
+              </a></buton>
+            </div>
+            {/* <div className="">
+                <a
+                  href="#"
+                  className="">
+                  Live demo
+                </a>
+              </div> */}
+          </div>
+        </div>
+        <div className="">
+          <img style={{ width: '100%' }}
             src="https://lh3.googleusercontent.com/gps-cs-s/AC9h4no9_FAqbd4m94ZISS81vJ20-4qQBHKexnw9dpOFZVf6av4LKGVPnExUu8Z5K5j5PRpCUfHG9hF4IqibrUBVohOe6zvDwfxKnY_m88Nb0Fg0fRzBd7AKoqimQ__Q47hsmPk3LAN-=s680-w680-h510"
             alt=""
           />
         </div>
-        <div className="text-center">
-          <p className="mt-3 max-w-md mx-auto text-lg text-gray-500 text-xl">
+        <div className="">
+          <p className="">
             Escuela Superior de Formación Artística pública de formación profesional en artes visuales desarrollado en un plan de estudios de 5 años ubicado en la ciudad de Ayacucho.
           </p>
-          <div className="relative w-full h-64 h-72">
-            <img
-              className="absolute inset-0 w-full h-full object-cover"
+          <div className="">
+            <img style={{ width: '100%' }}
               src="https://lh3.googleusercontent.com/gps-cs-s/AC9h4noZWRNgM9PMwgOkKmW2d8SAlOA6XcE7e2vZxBe4XFgujzc-GmRLP82Xqty1eQBjIjn2OrDQlRdvdvp4JrAiyGaME4G7kwKWDfSYKja1hN-MxzqEQ7LK5YrUPFIJBCSAFOcJnhcU=s680-w680-h510"
               alt=""
             />
           </div>
         </div>
-        <iframe width="100%" height="500" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"
+        <iframe style={{ width: "100%", height: "12cm", frameborder: "0cm", scrolling: "no" }}
           src="https://maps.google.com/maps?width=100%25&amp;height=500&amp;hl=es&amp;q=+(Escuela%20de%20Bellas%20Artes%20Felipe%20Guam%C3%A1n%20Poma%20de%20Ayala-Ayacucho)&amp;t=k&amp;z=18&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"><a
             href="https://www.gps.ie/car-satnav-gps/">Car GPS</a></iframe>
-        <iframe width="100%" height="1000px"
+        <iframe style={{ width: "100%", height: "15cm", frameborder: "0cm", scrolling: "no" }}
           src="https://www.google.com/maps/embed?pb=!4v1655850799758!6m8!1m7!1sGm3v-xYcR1tj1gz95RrkYg!2m2!1d-13.15635415471263!2d-74.2180525291301!3f124.85298126566764!4f2.1996870284465047!5f0.7820865974627469"
           allowfullscreen="" loading="lazy"
           referrerpolicy="no-referrer-when-downgrade"></iframe>
 
-      </main>
+      </div>
     </div>
   )
 }

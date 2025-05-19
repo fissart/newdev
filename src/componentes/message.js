@@ -9,34 +9,6 @@ import { Events } from "../socket/Events";
 import { MyForm } from '../socket/MyForm';
 
 export default function App() {
-
-
-
-  // const socket = io.connect('http://localhost:9997/', {
-  //   transports: ["websocket"],
-  //   secure: true,
-  //   extraHeaders: {
-  //     "my-custom-header": "1234", // WARN: this will be ignored in a browser
-  //   },
-  // })
-
-  // useEffect(() => {
-  //   socket.open()
-  //   return () => {
-  //     socket.close()
-  //     // Anything in here is fired on component unmount.
-  //   }
-  // }, [])
-
-  const sendMessage = async () => {
-    console.log('www')
-    socket.emit("send_message", {
-      senderId: "123",
-      receiverId: "456",
-      message: "Hello"
-    });
-  }
-
   const [isConnected, setIsConnected] = useState(socket.connected);
   const [fooEvents, setFooEvents] = useState([]);
 
@@ -67,7 +39,7 @@ export default function App() {
 
   return (
     <div className="contenedor">
-      <button onClick={sendMessage}>send message</button>
+      {/* <button onClick={sendMessage}>send message</button> */}
       {/* Button to trigger sending a message */}
       <div className="App">
         <ConnectionState isConnected={isConnected} />

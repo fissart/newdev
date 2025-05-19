@@ -1,0 +1,15 @@
+#!/bin/bash
+#--------------------------------------------
+# Description: Linux Lite Sounds Dialogue
+# Disable System Sounds
+# Authors: Jerry Bezencon
+# Website: https://www.linuxliteos.com
+#--------------------------------------------
+
+# Variables
+APPNAME="Lite Sounds - Disable System Sounds"
+ic="/usr/share/icons/Papirus/24x24/apps/litesoundsglob.png"		# dialog icon 24x24 PNG
+
+xfconf-query -c xsettings -p /Net/EnableEventSounds -s false; xfconf-query -c xsettings -p /Net/EnableInputFeedbackSounds -s false | zenity --info --width="280" --timeout=5 --title="   $APPNAME" --window-icon=$ic --text="\nSystem sounds have been disabled."
+
+exit 0

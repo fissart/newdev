@@ -1,0 +1,282 @@
+#!/bin/bash
+#-----------------------------------------------------------------------------------------
+# Name: Linux Lite Updates
+# Description: A GUI tool to easily install Updates in Linux Lite.
+# Authors: Misko_2083, Jerry Bezencon, gerito1, Ralphy
+# Website: https://www.linuxliteos.com
+#-----------------------------------------------------------------------------------------
+
+_APPNAME="Linux Lite Updates"                # Application name variable
+_MYUPDUSER=$(whoami)
+_ICON="/usr/share/icons/Papirus/24x24/apps/liteupdates.png"     # Lite Updates icon variable
+_UPDATES=$(mktemp /tmp/updateslist.XXXXXX)   # Updates log variable
+_DATE=$(date +"%A-%d-%B-%Y-%T")              # Date variable
+_TMPU="/tmp/_updusr"
+_PLAIN="/tmp/updateslist.txt"
+_LLUPDATES="/var/log/llupdates.log"
+if [ ! -f "$_TMPU" ]; then echo "$_MYUPDUSER" > "$_TMPU"; chmod 600 "$_TMPU"; fi
+_SVUSER=$(cat "$_TMPU")
+
+# function remove temp files
+rm_temp_files() {
+rm -f $_SVUSER
+rm -f $_TMPU
+rm -f $_UPDATES
+rm -f $_PLAIN
+rm -f /tmp/updateslist.*
+}
+
+sed -i 's/SHELL/SHELL/g' /etc/crontab
+
+# function view, save update log
+view_save_log() {
+  _ANS=$(zenity --text-info --width="780" --height="400" --title=" $_APPNAME - Error log" \
+                --extra-button="Copy to clipboard" --ok-label="Save..." --cancel-label="Quit" --filename="$_LLUPDATES" 2>/dev/null); _OPT=$(echo $?)
+    if [[ "$_ANS" =~ "Copy to clipboard" ]]; then
+      sudo -u ${SUDO_USER:-$_SVUSER} xclip -selection c "$_LLUPDATES"
+      xhost local:$_SVUSER > /dev/null 2>&1
+      export DISPLAY=:0
+      _NTFYICON="/usr/share/icons/Faenza/places/48/distributor-logo-ubuntu.png"
+      notify-send -i "$_NTFYICON" 'Updates Log copied to clipboard' "Go to www.linuxliteos.com/forums and paste the log into a new or existing thread." -t 10000
+      xhost - >/dev/null 2>&1; rm_temp_files; exit 0
+    fi
+    case $_OPT in
+       0) szSavePath=$(zenity --title="    Save Updates Log" --width="550" --height="380" --file-selection --filename="/home/$_SVUSER/llupdates.log" \
+                              --window-icon="$_ICON" --file-filter='*.log' --file-filter='All files | *' --save --confirm-overwrite 2>/dev/null)
+           if [ "$?" -eq "0" ]; then sudo -u ${SUDO_USER:-$_SVUSER} cp "$_LLUPDATES" "$szSavePath"; rm_temp_files; else rm_temp_files; exit 0 ; fi ;;
+       1) rm_temp_files; exit 0 ;;
+    esac
+}
+
+# Check Internet access
+if eval "curl -sk google.com" >> /dev/null 2>&1; then :; else # Prompt ERROR internet connection check failed and exit
+  zenity --info --width="320" --height="120" --ok-label="Close" --title="  $_APPNAME" \
+         --text="\n<b>Your computer is not connected to the internet</b> \n \nLinux Lite cannot check for updates. Please check your internet connection and try again." 2>/dev/null
+  rm_temp_files; exit 0
+fi
+
+# Kill off any package managers that may be running
+if [ "$(pidof synaptic)" ]; then killall -9 synaptic; fi
+if [ ! -z "$(pgrep gdebi-gtk)" ]; then killall -9 gdebi-gtk; fi
+
+# start dialog - Ask for elevation, else exit
+if [ $EUID -ne 0 ]; then
+   zenity --question --width="340" --height="100" --window-icon="$_ICON" --ok-label="Continue" --cancel-label="Cancel" --title="  $_APPNAME" \
+       --text="\nLinux Lite will now fetch the Updates list.\n\nClick <b>Cancel</b> to exit now or <b>Continue</b> to proceed." 2>/dev/null
+   case $? in
+      0) pkexec "$0"; if [ "${PIPESTATUS[@]}" -eq "126" ]; then rm_temp_files; fi; exit 0 ;;
+      1) rm_temp_files; exit 0 ;;
+   esac
+fi
+
+if [ "$?" -eq "0" ];then
+  # xclip check/ install
+  if [ -z  "$(dpkg -l | grep -E '^ii' | grep xclip)" ]; then
+    apt-get install xclip -y | zenity  --progress --pulsate --window-icon="$_ICON" --auto-close --no-cancel --width="320" --height="80" --title="$_APPNAME" \
+                                       --text="Preparing... please wait..." 2>/dev/null
+  fi
+
+# Fix Notifications bug - https://www.linuxliteos.com/forums/security-bug-fixes/notification-tool-doesn't-work/ REMOVE after 5.2 release
+if [ -f "/usr/lib/x86_64-linux-gnu/notify-osd" ]; then
+apt-get remove notify-osd -y ;
+else :; fi
+
+if [ -f "/usr/share/doc/notify-osd-icons/copyright" ]; then
+apt-get remove notify-osd-icons -y ;
+else :; fi
+
+# Repositories registered
+_SLIST=$(grep '^deb ' -c /etc/apt/sources.list)
+_SLISTD=$(grep -R --exclude="*.save" '^deb ' -c /etc/apt/sources.list.d/ | grep -c /)
+APTUPDATE=$(($_SLIST + $_SLISTD)) # Total of repositories registered, this is approximated
+apt-get update 2>&1 | tee "$_LLUPDATES" |
+awk -v total=$APTUPDATE '/^Ign|^ Get/{count++;$1=""} FNR { if (total != 0){percentage=int (1000*count/total);print (percentage < 90?percentage:99),"\n#",substr($0, 0, 128) }; fflush(stdout)}' \
+| zenity --progress --width="600" --text="Updating package lists..." --window-icon="$_ICON" --title="Updating Software Sources - please wait..." --percentage="0" --no-cancel --pulsate --auto-close 2>/dev/null
+    if [ "${PIPESTATUS[0]}" -ne "0" ]; then
+        unset APTUPDATE; rm_temp_files; unset _UPDATES
+        sed -i '1 i\===========================\
+Install Updates Error log\
+===========================\
+Install Updates could not fetch the package cache information lists.\
+Go to https://www.linuxliteos.com/forums/ and paste the log below into a new or existing thread for assistance.\n\
+============ Log ===========\n' "$_LLUPDATES"
+        sleep 4 | zenity --progress --pulsate --window-icon="error" --auto-close --no-cancel --width="380" --height="80" --title="$_APPNAME - Error" \
+                         --text="Errors occurred while fetching packages cache information lists.\n✔ Retrieving error log, please wait..." 2>/dev/null
+        view_save_log; exit 1
+    fi
+  unset APTUPDATE
+
+  # Creates a list in /tmp/updateslist
+  # initialize html page
+  ( echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Final//EN">'
+  echo '<html style="width: 98%;"><head>'
+  echo "<title>List of available Updates</title>"
+  echo '<meta http-equiv="Content-Type" content="text/html; charset=utf-8">'
+  echo "<style>"
+  echo "    body    { background: #dcdcdc }"
+  echo "    .title  { font: bold 90% droidsans; color: #3ca2c0; padding: 10px 0 1px 0 } "
+  echo "    .stitle { font: bold 90% droidsans; color: #0044DD; padding: 10px 0 10px 0 } "
+  echo "    .sstitle{ font: bold 80% droidsans; color: #ffffff; background: #3ca2c0; } "
+  echo "    .field  { font: 70% droidsans; color: #000000; padding: 2px; padding-left: 5px } "
+  echo "    .value  { font: 60% droidsans; color: #505050 } "
+  echo "</style> "
+  echo '</head><body style="width: 100%;">') >> $_UPDATES
+  echo '<p><img src="data:image/png;base64,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"
+  alt="" width="32" height="32" style="float:left; margin:0 5px 5px 0;" /></p>' >> $_UPDATES
+  echo '<h1 class="title">Updates Available for your System</h1><table style="width: 100%;">' >> $_UPDATES
+  echo "<tr><td class="value"><i>Click <b>Update Now</b> to install the updates listed below or <b>Cancel</b> to exit.</i></td></tr>" >> $_UPDATES
+  echo '<tr><td><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAtgAAAALCAYAAABF5vqtAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3QMIDAINpf0QNQAABGpJREFUeNrtnNuSpCAMhhP3/R95/fdid6pcC3Ii2GCHm+lWyQ
+  nQL5FpJqKDiH4REdPfdvz7y5djP5+Py+freWocu15/lUs3OUdDz/WcJJs6xw7Bn5ZP1LGNlJhIsbrH5rgdo4atrf7H7Rw1fCfBDmrYQY3YUcOOyDnq2NDynQ0yyGEHKTKs9msyJFu0JvnJgf5eHZ6+nn4jfSg4jjRBV7W8hgfk4YM2YkAOnHZg0B4EbMOArxBkaXLOgE1WnT/H0fjc81XSA4ONEH
+  w7hXPo2Hs/dnb0tnShY5+k61SuQUfuKejG7Trc+rS+9/Sdgv57v9+N8dB8QMOnnj3/+cMCiEkAdBghTIM8NoCfBI0taD2U63rAr+mW4FdKOnpA3LKjB+MsjAUL37XxYAPkWmC6NQYSDGvQqkGeNm+twGiRYQF9C8R74ZUdNkUg1aP/CdhmR59PwfG3QzkW1JcBkjMB39MHAR8RjI9VhgaQmp8Y8A
+  OCThiuIQVQNf+gQLfXJggxkcBbk3F24ByGhMID7z1g1/xHB1J7INuSL8lsJQOk6DwD8wDGRIaugG0BkyhwaNVGrdpqqX56KqzevxYbDwc4a0BPSkJhqVBr/hwKnHv8sMA5B+cDGWMUmW+WcbGsAW812mKzFzA9Ff3R9RyFzlG4nwW3s4B5JxDHRrIjMJ0Fxdq1O1SMtXhEANhjAxwAbYFSb+wkkL
+  TCVQ/QyAibVlmWxMACzVqcJd0WgCbSK/6n4JuWpHgSLxiSFM+cjiSh/x0bqRZFHyKjr/g1CPFUJT36NVj0QJcXjC1JDBuvOwJwpVWVvdtJIls3vNVnC6RxYA5Y9ESuj1Sso1tcrKA+sqZHADsLujNBt7aU5IJzZuV3VA6SdGRUq0fAdhY4eJMIC4hZYxcFYAnI4LBZA1+PrXfo89pogUuvbR7/I0
+  kcjPMRzrVluX9g0v3DLOsTDyCerG/0VbP3NT4P2vYpsGNH7DxvOiwgbYVxS8yjb1846F80WbSMA1POtops4M6E3gwwfqrCnXU/Ww3OkXTNE7bhAT9GYR7GPhGoRtCG0T3eFujx+oDgmHsBDA5bvfvWETge9c0D95k6tGQgmqhF1g4m3Vceue+tcuPnBW33PDh5gtxIwpL5RmJ0qwAn2hj9Z8ZIch
+  EFVE4Ym8j4jK6FaLKSnWTzA+t0lXvXDg0flItEmU/uyUZSDEcr1LNs9oJ1BMZGoXg0gcmWF01yRu3Imtv40H0iew1tA7a7NN48Phlg+4Te7F+NyAamyJaMrJhl7D2eAZi8yFp68g0aL7yG3wTQo3pnV6zwgdhFgRgPxHdWnJCsAxPimwGYM+I1OzFc6R6yBAgXYH9fHPkL/N7hZ9lW2I4wO04rVH
+  j55Wul2vyH7gpQssNPE84C5lXi80Si9vZk+dXgW4BdbZcx5Yrt9oBdc2WOP7tXsN/2kMVLbEbF73X+FtAWMFSr9vXzstZMtTfPiXrQV9tpbtR8rVYPhmrVqtWarXEpgKpWY1Ot2je0P0+oRCvglsYEAAAAAElFTkSuQmCC"
+  alt="" width="700" height="11" style="float:center; margin:0 1px 1px 0;" /></td></tr>' >> $_UPDATES
+  ( echo "<tr><td colspan="2" class="sstitle">&nbsp;&nbsp;&nbsp;&nbsp;List of available Updates</td></tr>" && echo "<tr><td><p></p></td></tr>") >> $_UPDATES
+
+  apt-get --just-print dist-upgrade 2>&1 | perl -ne 'if (/Inst\s([\w,\-,\d,\.,~,:,\+]+)\s\[([\w,\-,\d,\.,~,:,\+]+)\]\s\(([\w,\-,\d,\.,~,:,\+]+)\)? /i) {print "Name: $1 INSTALLED: $2 AVAILABLE: $3\n"}' |
+  awk '{print NR,":\t"$0}' > $_PLAIN
+  sed '
+  s:^:<tr><td class="field">:;
+  s:$:</td></tr>:
+  ' $_PLAIN >> $_UPDATES
+  # updates footer
+  ( echo "<tr><td><p></p></td></tr>" && echo "</html>" ) >> $_UPDATES
+
+  # Check for available updates; if none then remove /tmp/updateslist.XXXXXX and display up-to-date dialog
+      if [  -z "$(cat $_PLAIN)"  ]; then
+        rm_temp_files; unset _UPDATES
+        zenity --info --window-icon="$_ICON"  --width="200" --height="60" --title="  $_APPNAME" \
+               --text="\nYour system is up to date." 2>/dev/null
+        exit 0
+      fi
+
+# Erase existing available info
+dpkg --clear-avail
+else
+  rm_temp_files; unset _UPDATES; exit 0
+fi
+
+# Call the zenity dialog to show update list
+zenity --text-info --window-icon="$_ICON" --ok-label="Update Now" --cancel-label="Cancel" --title="  $_APPNAME" --width="760" --height="400" --html --no-interaction --filename="$_UPDATES" 2>/dev/null
+      if [ "$?" -eq "0" ];then
+        # Continue script if no halt, remove tmp file and unset variables
+        rm $_UPDATES; unset _UPDATES
+
+#Begin upgrade
+DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" dist-upgrade -y  2>&1 | tee "$_LLUPDATES" |
+awk ' BEGIN { FS=" "; total=1;end_download=0} /upgraded/ {total= $1 + $3;FS="[ :]" } /^Get:[[:digit:]]+/ {printf "#Downloading %s %s %s\n",$7,$(NF-1),$NF;print int(($2 - 1) * 100 / total);
+fflush(stdout)} /^\(Reading / {if (end_download==0){print 100;fflush(stdout);end_download=1}} /^(Preparing|Unpacking|Selecting|Processing|Setting|Download)/ {print "#", substr($0, 0, 128); fflush(stdout)}' \
+  | ( zenity --progress --width="600" --window-icon="$_ICON" --percentage="0" --no-cancel --auto-close --title="Downloading - please wait..." --text="Downloading package(s)...\nThis may take a while."  2>/dev/null;
+      zenity --progress --window-icon="$_ICON" --width="600" --text="Installing and configuring packages...\nThis may take a while." --title="Installing - please wait..." --no-cancel --pulsate --auto-close 2>/dev/null)
+
+    if [ "${PIPESTATUS[0]}" -ne "0" ]; then
+      sed -i '1 i\===========================\
+Install Updates Error log\
+===========================\
+Install Updates could not successfully download and install available updates.\
+Go to https://www.linuxliteos.com/forums/ and paste the log below into a new or existing thread for assistance.\n\
+============ Log ===========\n' "$_LLUPDATES"
+      sleep 4 | zenity --progress --pulsate --window-icon="error" --auto-close --no-cancel --width="320" --height="80" --title="$_APPNAME - Error" \
+                       --text="Errors occurred while updating. \n✔ Retrieving errors log. Please wait..." 2>/dev/null
+      view_save_log; exit 0
+    fi
+
+    # Halt updates script if user selects Cancel
+    else
+       rm_temp_files; unset _UPDATES
+       zenity --info --width="200" --timeout="3" --window-icon="$_ICON" --title="  $_APPNAME" --text="\nUpdates have been canceled." 2>/dev/null
+       exit 0
+    fi
+
+# If Ubuntu base package has been upgraded during Install Updates, /usr/share/plymouth/themes/ubuntu-text/ubuntu-text.plymouth
+llverprnt=$(awk '{print}' /etc/llver)
+checkdefplym="/usr/share/plymouth/themes/ubuntu-text/ubuntu-text.plymouth"
+
+if grep -q 0x988592 "$checkdefplym"; then
+  sed -i "s/^title=Ubuntu.*$/title=$llverprnt/g" /usr/share/plymouth/themes/ubuntu-text/ubuntu-text.plymouth ;
+  sed -i "s/black=0x2c001e/black=0x000000/g" /usr/share/plymouth/themes/ubuntu-text/ubuntu-text.plymouth ;
+  sed -i "s/white=0xffffff/white=0xffffff/g" /usr/share/plymouth/themes/ubuntu-text/ubuntu-text.plymouth ;
+  sed -i "s/brown=0xff4012/brown=0xffe082/g" /usr/share/plymouth/themes/ubuntu-text/ubuntu-text.plymouth ;
+  sed -i "s/blue=0x988592/blue=0x000000/g" /usr/share/plymouth/themes/ubuntu-text/ubuntu-text.plymouth && update-initramfs -u |
+  zenity --progress --width=600 --auto-close --no-cancel --pulsate --title="Updating boot configuration please wait..."
+else
+	echo " "
+fi
+
+# Openjdk Menu entry performs no task and is malformed, lets unleash the kaw so that MenuLibre doesn't complain
+# See if openjdk desktop file exists, if so hide in menus
+openjdkpath="/usr/share/applications/openjdk-11-policytool.desktop"
+if [ -e "$openjdkpath" ]; then
+	rm -rf $openjdkpath;
+	touch $openjdkpath;
+	chmod 644 $openjdkpath;
+	echo "[Desktop Entry]" >> $openjdkpath;
+	echo "Name=OpenJDK Java 11 Policy Tool" >> $openjdkpath;
+	echo "Comment=OpenJDK Java 11 Policy Tool" >> $openjdkpath;
+	echo "Keywords=java;security;policytool" >> $openjdkpath;
+	echo "Exec=/usr/bin/java" >> $openjdkpath;
+	echo "Terminal=false" >> $openjdkpath;
+	echo "Type=Application" >> $openjdkpath;
+	echo "Icon=openjdk-11" >> $openjdkpath;
+	echo "Categories=Settings;" >> $openjdkpath;
+	echo "Hidden=true" >> $openjdkpath;
+
+else 
+	echo "File does not exist"
+fi
+
+# Ensure /etc/crontab gets put back to Linux Lite defaults if crontab pkg is updated
+sed -i '18,22 d' /etc/crontab
+
+sleep 1
+
+echo '0 *	* * *	root    cd / && run-parts --report /etc/cron.hourly' >> /etc/crontab
+echo '0 19	* * *	root	test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.daily )' >> /etc/crontab
+echo '0 19	* * 1	root	test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.weekly )' >> /etc/crontab
+echo '0 19	* 1 *	root	test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.monthly )' >> /etc/crontab
+echo '#' >> /etc/crontab
+
+service cron restart
+
+# Remove useless Icon browser shortcut from Yad
+test -e ["/usr/share/applications/yad-icon-browser.desktop"] || rm -rf /usr/share/applications/yad-icon-browser.desktop
+
+    PROCEED=$(zenity --question --width="360" --height="80" --title="  $_APPNAME" --window-icon="$_ICON" --text="\n$_APPNAME completed successfully.\n\nWould you like to view the $_APPNAME log?" 2>/dev/null ; echo $?)
+    if [ ${PROCEED} -eq 1 ]; then rm_temp_files; :; else
+      zenity --text-info --width="750" --height="400" --cancel-label="Quit" --ok-label="Save..." --title="  $_APPNAME - Log" --window-icon="$_ICON" --filename="$_LLUPDATES" 2>/dev/null
+        if [ $? -eq 0 ]; then
+          # Save report
+          szSavePath=$(zenity --width="550" --height="380" --title=" Save Updates log" --window-icon="$_ICON" --file-selection --filename=/home/$_SVUSER/llupdates-"${_DATE}".txt --file-filter='*.txt' \
+                              --file-filter='All files | *' --save --confirm-overwrite 2>/dev/null)
+          sudo -u ${SUDO_USER:-$_SVUSER} cp "$_LLUPDATES" "$szSavePath"; rm_temp_files; else rm_temp_files; :
+        fi
+    fi
+    if [ -s /var/run/reboot-required ]; then
+        zenity --question --width="300" --height="100" --ok-label="Reboot now" --cancel-label="Continue using my system" --title=" $_APPNAME - Reboot required" \
+               --text="\nPrevious updates require rebooting the system for changes to take effect.\n\nWould you like to reboot now?" 2>/dev/null
+        if [ "$?" -eq "0" ]; then reboot; else exit 0 ; fi
+    fi
+
+exit 0

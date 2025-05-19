@@ -5,6 +5,7 @@ import ExportToExcel from './calculadorajs';
 
 
 const NoPage = () => {
+
   const data = [
     { id: 1, name: 'Name 1', email: 'Name1@example.com', joinDate: '2023-01-15' },
     { id: 1, name: 'Name 1', email: 'Name1@example.com', joinDate: '2023-01-15' },

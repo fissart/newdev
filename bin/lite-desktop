@@ -1,0 +1,1208 @@
+#! /bin/bash
+#--------------------------------------------------------------------------------------------------------
+# Name: Linux Lite - Lite Desktop
+# Add/Remove Desktop icons in Linux Lite
+# Architecture: all
+# Author: Jerry Bezencon
+# Website: https://www.linuxliteos.com
+#--------------------------------------------------------------------------------------------------------
+
+# Set variables
+desktoppath="/usr/share/litedesktop/"
+ic="/usr/share/icons/Papirus/24x24/apps/litedesktop.png"		# Lite Desktop icon variable
+
+desktopicons=$(yad --borders=20 --window-icon="$ic" --text-align="center" --list --title "Desktop Icons" --text "Select the Desktop Icon or Icons\nthat you wish to <b>Enable</b> or <b>Disable</b>\n" --checklist --width="460" --height="510" \
+--column "Select" --column " " --column "Desktop Icon" \
+FALSE " " " This PC - Enable" \
+FALSE " " " User Files - Enable" \
+FALSE " " " Network - Enable" \
+FALSE " " " Control Panel - Enable" \
+FALSE " " " Help Manual - Enable" \
+FALSE " " " This PC - Disable" \
+FALSE " " " User Files - Disable" \
+FALSE " " " Network - Disable" \
+FALSE " " " Control Panel - Disable" \
+FALSE " " " Help Manual - Disable" \
+--separator=",");
+
+# Enable Desktop Icon/s
+
+# This PC - Enable
+echo $desktopicons | grep "This PC - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/computer.desktop /home/$USER/Desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "This PC - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/computer.desktop /home/$USER/Werkskerm 2>/dev/null
+fi
+
+echo $desktopicons | grep "This PC - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/computer.desktop /home/$USER/"سطح المكتب"
+fi
+
+echo $desktopicons | grep "This PC - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/computer.desktop /home/$USER/Schreibtisch 2>/dev/null
+fi
+
+echo $desktopicons | grep "This PC - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/computer.desktop /home/$USER/Escritorio 2>/dev/null
+fi
+
+echo $desktopicons | grep "This PC - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/computer.desktop /home/$USER/رومیزی
+fi
+
+echo $desktopicons | grep "This PC - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/computer.desktop /home/$USER/Työpöytä 2>/dev/null
+fi
+
+echo $desktopicons | grep "This PC - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/computer.desktop /home/$USER/Bureau 2>/dev/null
+fi
+
+echo $desktopicons | grep "This PC - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/computer.desktop /home/$USER/"שולחן העבודה"
+fi
+
+echo $desktopicons | grep "This PC - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/computer.desktop /home/$USER/डेस्कटॉप 2>/dev/null
+fi
+
+echo $desktopicons | grep "This PC - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/computer.desktop /home/$USER/"Radna površina" 2>/dev/null
+fi
+
+echo $desktopicons | grep "This PC - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/computer.desktop /home/$USER/Scrivania 2>/dev/null
+fi
+
+echo $desktopicons | grep "This PC - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/computer.desktop /home/$USER/デスクトップ 2>/dev/null
+fi
+
+echo $desktopicons | grep "This PC - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/computer.desktop /home/$USER/바탕화면 2>/dev/null
+fi
+
+echo $desktopicons | grep "This PC - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/computer.desktop /home/$USER/Bureaublad 2>/dev/null
+fi
+
+echo $desktopicons | grep "This PC - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/computer.desktop /home/$USER/Pulpit 2>/dev/null
+fi
+
+echo $desktopicons | grep "This PC - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/computer.desktop /home/$USER/Desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "This PC - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/computer.desktop /home/$USER/"Área de Trabalho" 2>/dev/null
+fi
+
+echo $desktopicons | grep "This PC - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/computer.desktop /home/$USER/"Рабочий стол" 2>/dev/null
+fi
+
+echo $desktopicons | grep "This PC - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/computer.desktop /home/$USER/"Радна површина" 2>/dev/null
+fi
+
+echo $desktopicons | grep "This PC - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/computer.desktop /home/$USER/Skrivbord 2>/dev/null
+fi
+
+echo $desktopicons | grep "This PC - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/computer.desktop /home/$USER/Стільниця 2>/dev/null
+fi
+
+echo $desktopicons | grep "This PC - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/computer.desktop /home/$USER/桌面 2>/dev/null
+fi
+
+# User Files - Enable
+
+echo $desktopicons | grep "User Files - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/userfiles.desktop /home/$USER/Desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "User Files - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/userfiles.desktop /home/$USER/Werkskerm 2>/dev/null
+fi
+
+echo $desktopicons | grep "User Files - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/userfiles.desktop /home/$USER/"سطح المكتب"
+fi
+
+echo $desktopicons | grep "User Files - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/userfiles.desktop /home/$USER/Schreibtisch 2>/dev/null
+fi
+
+echo $desktopicons | grep "User Files - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/userfiles.desktop /home/$USER/Escritorio 2>/dev/null
+fi
+
+echo $desktopicons | grep "User Files - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/userfiles.desktop /home/$USER/رومیزی
+fi
+
+echo $desktopicons | grep "User Files - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/userfiles.desktop /home/$USER/Työpöytä 2>/dev/null
+fi
+
+echo $desktopicons | grep "User Files - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/userfiles.desktop /home/$USER/Bureau 2>/dev/null
+fi
+
+echo $desktopicons | grep "User Files - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/userfiles.desktop /home/$USER/"שולחן העבודה"
+fi
+
+echo $desktopicons | grep "User Files - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/userfiles.desktop /home/$USER/डेस्कटॉप 2>/dev/null
+fi
+
+echo $desktopicons | grep "User Files - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/userfiles.desktop /home/$USER/"Radna površina" 2>/dev/null
+fi
+
+echo $desktopicons | grep "User Files - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/userfiles.desktop /home/$USER/Scrivania 2>/dev/null
+fi
+
+echo $desktopicons | grep "User Files - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/userfiles.desktop /home/$USER/デスクトップ 2>/dev/null
+fi
+
+echo $desktopicons | grep "User Files - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/userfiles.desktop /home/$USER/바탕화면 2>/dev/null
+fi
+
+echo $desktopicons | grep "User Files - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/userfiles.desktop /home/$USER/Bureaublad 2>/dev/null
+fi
+
+echo $desktopicons | grep "User Files - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/userfiles.desktop /home/$USER/Pulpit 2>/dev/null
+fi
+
+echo $desktopicons | grep "User Files - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/userfiles.desktop /home/$USER/Desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "User Files - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/userfiles.desktop /home/$USER/"Área de Trabalho" 2>/dev/null
+fi
+
+echo $desktopicons | grep "User Files - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/userfiles.desktop /home/$USER/"Рабочий стол" 2>/dev/null
+fi
+
+echo $desktopicons | grep "User Files - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/userfiles.desktop /home/$USER/"Радна површина" 2>/dev/null
+fi
+
+echo $desktopicons | grep "User Files - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/userfiles.desktop /home/$USER/Skrivbord 2>/dev/null
+fi
+
+echo $desktopicons | grep "User Files - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/userfiles.desktop /home/$USER/Стільниця 2>/dev/null
+fi
+
+echo $desktopicons | grep "User Files - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/userfiles.desktop /home/$USER/桌面 2>/dev/null
+fi
+
+# Network - Enable
+
+echo $desktopicons | grep "Network - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/network.desktop /home/$USER/Desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Network - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/network.desktop /home/$USER/Werkskerm 2>/dev/null
+fi
+
+echo $desktopicons | grep "Network - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/network.desktop /home/$USER/"سطح المكتب"
+fi
+
+echo $desktopicons | grep "Network - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/network.desktop /home/$USER/Schreibtisch 2>/dev/null
+fi
+
+echo $desktopicons | grep "Network - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/network.desktop /home/$USER/Escritorio 2>/dev/null
+fi
+
+echo $desktopicons | grep "Network - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/network.desktop /home/$USER/رومیزی
+fi
+
+echo $desktopicons | grep "Network - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/network.desktop /home/$USER/Työpöytä 2>/dev/null
+fi
+
+echo $desktopicons | grep "Network - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/network.desktop /home/$USER/Bureau 2>/dev/null
+fi
+
+echo $desktopicons | grep "Network - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/network.desktop /home/$USER/"שולחן העבודה"
+fi
+
+echo $desktopicons | grep "Network - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/network.desktop /home/$USER/डेस्कटॉप 2>/dev/null
+fi
+
+echo $desktopicons | grep "Network - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/network.desktop /home/$USER/"Radna površina" 2>/dev/null
+fi
+
+echo $desktopicons | grep "Network - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/network.desktop /home/$USER/Scrivania 2>/dev/null
+fi
+
+echo $desktopicons | grep "Network - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/network.desktop /home/$USER/デスクトップ 2>/dev/null
+fi
+
+echo $desktopicons | grep "Network - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/network.desktop /home/$USER/바탕화면 2>/dev/null
+fi
+
+echo $desktopicons | grep "Network - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/network.desktop /home/$USER/Bureaublad 2>/dev/null
+fi
+
+echo $desktopicons | grep "Network - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/network.desktop /home/$USER/Pulpit 2>/dev/null
+fi
+
+echo $desktopicons | grep "Network - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/network.desktop /home/$USER/Desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Network - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/network.desktop /home/$USER/"Área de Trabalho" 2>/dev/null
+fi
+
+echo $desktopicons | grep "Network - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/network.desktop /home/$USER/"Рабочий стол" 2>/dev/null
+fi
+
+echo $desktopicons | grep "Network - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/network.desktop /home/$USER/"Радна површина" 2>/dev/null
+fi
+
+echo $desktopicons | grep "Network - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/network.desktop /home/$USER/Skrivbord 2>/dev/null
+fi
+
+echo $desktopicons | grep "Network - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/network.desktop /home/$USER/Стільниця 2>/dev/null
+fi
+
+echo $desktopicons | grep "Network - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/network.desktop /home/$USER/桌面 2>/dev/null
+fi
+
+# Control Panel - Enable
+
+echo $desktopicons | grep "Control Panel - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/settings.desktop /home/$USER/Desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Control Panel - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/settings.desktop /home/$USER/Werkskerm 2>/dev/null
+fi
+
+echo $desktopicons | grep "Control Panel - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/settings.desktop /home/$USER/"سطح المكتب"
+fi
+
+echo $desktopicons | grep "Control Panel - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/settings.desktop /home/$USER/Schreibtisch 2>/dev/null
+fi
+
+echo $desktopicons | grep "Control Panel - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/settings.desktop /home/$USER/Escritorio 2>/dev/null
+fi
+
+echo $desktopicons | grep "Control Panel - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/settings.desktop /home/$USER/رومیزی
+fi
+
+echo $desktopicons | grep "Control Panel - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/settings.desktop /home/$USER/Työpöytä 2>/dev/null
+fi
+
+echo $desktopicons | grep "Control Panel - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/settings.desktop /home/$USER/Bureau 2>/dev/null
+fi
+
+echo $desktopicons | grep "Control Panel - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/settings.desktop /home/$USER/"שולחן העבודה"
+fi
+
+echo $desktopicons | grep "Control Panel - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/settings.desktop /home/$USER/डेस्कटॉप 2>/dev/null
+fi
+
+echo $desktopicons | grep "Control Panel - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/settings.desktop /home/$USER/"Radna površina" 2>/dev/null
+fi
+
+echo $desktopicons | grep "Control Panel - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/settings.desktop /home/$USER/Scrivania 2>/dev/null
+fi
+
+echo $desktopicons | grep "Control Panel - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/settings.desktop /home/$USER/デスクトップ 2>/dev/null
+fi
+
+echo $desktopicons | grep "Control Panel - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/settings.desktop /home/$USER/바탕화면 2>/dev/null
+fi
+
+echo $desktopicons | grep "Control Panel - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/settings.desktop /home/$USER/Bureaublad 2>/dev/null
+fi
+
+echo $desktopicons | grep "Control Panel - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/settings.desktop /home/$USER/Pulpit 2>/dev/null
+fi
+
+echo $desktopicons | grep "Control Panel - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/settings.desktop /home/$USER/Desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Control Panel - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/settings.desktop /home/$USER/"Área de Trabalho" 2>/dev/null
+fi
+
+echo $desktopicons | grep "Control Panel - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/settings.desktop /home/$USER/"Рабочий стол" 2>/dev/null
+fi
+
+echo $desktopicons | grep "Control Panel - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/settings.desktop /home/$USER/"Радна површина" 2>/dev/null
+fi
+
+echo $desktopicons | grep "Control Panel - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/settings.desktop /home/$USER/Skrivbord 2>/dev/null
+fi
+
+echo $desktopicons | grep "Control Panel - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/settings.desktop /home/$USER/Стільниця 2>/dev/null
+fi
+
+echo $desktopicons | grep "Control Panel - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/settings.desktop /home/$USER/桌面 2>/dev/null
+fi
+
+# Help Manual - Enable
+
+echo $desktopicons | grep "Help Manual - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/helpmanual.desktop /home/$USER/Desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Help Manual - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/helpmanual.desktop /home/$USER/Werkskerm 2>/dev/null
+fi
+
+echo $desktopicons | grep "Help Manual - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/helpmanual.desktop /home/$USER/"سطح المكتب"
+fi
+
+echo $desktopicons | grep "Help Manual - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/helpmanual.desktop /home/$USER/Schreibtisch 2>/dev/null
+fi
+
+echo $desktopicons | grep "Help Manual - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/helpmanual.desktop /home/$USER/Escritorio 2>/dev/null
+fi
+
+echo $desktopicons | grep "Help Manual - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/helpmanual.desktop /home/$USER/رومیزی
+fi
+
+echo $desktopicons | grep "Help Manual - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/helpmanual.desktop /home/$USER/Työpöytä 2>/dev/null
+fi
+
+echo $desktopicons | grep "Help Manual - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/helpmanual.desktop /home/$USER/Bureau 2>/dev/null
+fi
+
+echo $desktopicons | grep "Help Manual - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/helpmanual.desktop /home/$USER/"שולחן העבודה"
+fi
+
+echo $desktopicons | grep "Help Manual - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/helpmanual.desktop /home/$USER/डेस्कटॉप 2>/dev/null
+fi
+
+echo $desktopicons | grep "Help Manual - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/helpmanual.desktop /home/$USER/"Radna površina" 2>/dev/null
+fi
+
+echo $desktopicons | grep "Help Manual - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/helpmanual.desktop /home/$USER/Scrivania 2>/dev/null
+fi
+
+echo $desktopicons | grep "Help Manual - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/helpmanual.desktop /home/$USER/デスクトップ 2>/dev/null
+fi
+
+echo $desktopicons | grep "Help Manual - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/helpmanual.desktop /home/$USER/바탕화면 2>/dev/null
+fi
+
+echo $desktopicons | grep "Help Manual - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/helpmanual.desktop /home/$USER/Bureaublad 2>/dev/null
+fi
+
+echo $desktopicons | grep "Help Manual - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/helpmanual.desktop /home/$USER/Pulpit 2>/dev/null
+fi
+
+echo $desktopicons | grep "Help Manual - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/helpmanual.desktop /home/$USER/Desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Help Manual - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/helpmanual.desktop /home/$USER/"Área de Trabalho" 2>/dev/null
+fi
+
+echo $desktopicons | grep "Help Manual - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/helpmanual.desktop /home/$USER/"Рабочий стол" 2>/dev/null
+fi
+
+echo $desktopicons | grep "Help Manual - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/helpmanual.desktop /home/$USER/"Радна површина" 2>/dev/null
+fi
+
+echo $desktopicons | grep "Help Manual - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/helpmanual.desktop /home/$USER/Skrivbord 2>/dev/null
+fi
+
+echo $desktopicons | grep "Help Manual - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/helpmanual.desktop /home/$USER/Стільниця 2>/dev/null
+fi
+
+echo $desktopicons | grep "Help Manual - Enable" > /dev/null
+if [ $? = 0 ];then
+    cp $desktoppath/helpmanual.desktop /home/$USER/桌面 2>/dev/null
+fi
+
+# Clean up home folder files with translated names - bug to fix later
+find /home/$USER/ -type f \( -name "Werkskerm" -o -name "سطح المكتب" -o -name "Schreibtisch" -o -name "Escritorio" -o -name "رومیزی" -o -name "Työpöytä" -o -name "Bureau" -o -name "שולחן העבודה" -o -name "डेस्कटॉप" -o -name "Radna površina" -o -name "Scrivania" -o -name "デスクトップ" -o -name "바탕화면" -o -name "Bureaublad" -o -name "Pulpit" -o -name "Desktop" -o -name "Área de Trabalho" -o -name "Рабочий стол" -o -name "Радна површина" -o -name "Skrivbord" -o -name "Стільниця" -o -name "桌面" \) -exec rm {} \;
+
+#
+#
+# Disable Desktop Icon/s
+#
+#
+
+# This PC - Disable
+
+echo $desktopicons | grep "This PC - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Desktop/computer.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "This PC - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Werkskerm/computer.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "This PC - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/"سطح المكتب"/computer.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "This PC - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Schreibtisch/computer.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "This PC - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Escritorio/computer.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "This PC - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/رومیزی/computer.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "This PC - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Työpöytä/computer.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "This PC - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Bureau/computer.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "This PC - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/"שולחן העבודה"/computer.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "This PC - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/डेस्कटॉप/computer.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "This PC - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/"Radna površina"/computer.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "This PC - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Scrivania/computer.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "This PC - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/デスクトップ/computer.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "This PC - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/바탕화면/computer.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "This PC - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Bureaublad/computer.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "This PC - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Pulpit/computer.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "This PC - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Desktop/computer.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "This PC - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/"Área de Trabalho"/computer.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "This PC - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/"Рабочий стол"/computer.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "This PC - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/"Радна површина"/computer.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "This PC - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Skrivbord/computer.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "This PC - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Стільниця/computer.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "This PC - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/桌面/computer.desktop 2>/dev/null
+fi
+
+# User Files - Disable
+
+echo $desktopicons | grep "User Files - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Desktop/userfiles.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "User Files - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Werkskerm/userfiles.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "User Files - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/"سطح المكتب"/userfiles.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "User Files - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Schreibtisch/userfiles.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "User Files - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Escritorio/userfiles.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "User Files - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/رومیزی/userfiles.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "User Files - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Työpöytä/userfiles.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "User Files - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Bureau/userfiles.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "User Files - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/"שולחן העבודה"/userfiles.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "User Files - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/डेस्कटॉप/userfiles.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "User Files - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/"Radna površina"/userfiles.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "User Files - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Scrivania/userfiles.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "User Files - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/デスクトップ/userfiles.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "User Files - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/바탕화면/userfiles.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "User Files - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Bureaublad/userfiles.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "User Files - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Pulpit/userfiles.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "User Files - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Desktop/userfiles.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "User Files - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/"Área de Trabalho"/userfiles.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "User Files - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/"Рабочий стол"/userfiles.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "User Files - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/"Радна површина"/userfiles.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "User Files - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Skrivbord/userfiles.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "User Files - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Стільниця/userfiles.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "User Files - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/桌面/userfiles.desktop 2>/dev/null
+fi
+
+# Network - Disable
+
+echo $desktopicons | grep "Network - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Desktop/network.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Network - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Werkskerm/network.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Network - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/"سطح المكتب"/network.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Network - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Schreibtisch/network.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Network - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Escritorio/network.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Network - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/رومیزی/network.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Network - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Työpöytä/network.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Network - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Bureau/network.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Network - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/"שולחן העבודה"/network.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Network - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/डेस्कटॉप/network.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Network - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/"Radna površina"/network.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Network - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Scrivania/network.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Network - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/デスクトップ/network.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Network - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/바탕화면/network.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Network - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Bureaublad/network.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Network - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Pulpit/network.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Network - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Desktop/network.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Network - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/"Área de Trabalho"/network.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Network - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/"Рабочий стол"/network.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Network - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/"Радна површина"/network.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Network - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Skrivbord/network.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Network - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Стільниця/network.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Network - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/桌面/network.desktop 2>/dev/null
+fi
+
+# Control Panel - Disable
+
+echo $desktopicons | grep "Control Panel - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Desktop/settings.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Control Panel - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Werkskerm/settings.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Control Panel - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/"سطح المكتب"/settings.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Control Panel - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Schreibtisch/settings.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Control Panel - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Escritorio/settings.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Control Panel - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/رومیزی/settings.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Control Panel - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Työpöytä/settings.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Control Panel - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Bureau/settings.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Control Panel - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/"שולחן העבודה"/settings.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Control Panel - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/डेस्कटॉप/settings.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Control Panel - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/"Radna površina"/settings.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Control Panel - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Scrivania/settings.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Control Panel - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/デスクトップ/settings.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Control Panel - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/바탕화면/settings.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Control Panel - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Bureaublad/settings.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Control Panel - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Pulpit/settings.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Control Panel - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Desktop/settings.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Control Panel - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/"Área de Trabalho"/settings.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Control Panel - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/"Рабочий стол"/settings.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Control Panel - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/"Радна површина"/settings.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Control Panel - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Skrivbord/settings.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Control Panel - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Стільниця/settings.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Control Panel - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/桌面/settings.desktop 2>/dev/null
+fi
+
+# Help Manual - Disable
+
+echo $desktopicons | grep "Help Manual - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Desktop/helpmanual.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Help Manual - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Werkskerm/helpmanual.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Help Manual - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/"سطح المكتب"/helpmanual.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Help Manual - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Schreibtisch/helpmanual.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Help Manual - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Escritorio/helpmanual.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Help Manual - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/رومیزی/helpmanual.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Help Manual - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Työpöytä/helpmanual.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Help Manual - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Bureau/helpmanual.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Help Manual - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/"שולחן העבודה"/helpmanual.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Help Manual - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/डेस्कटॉप/helpmanual.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Help Manual - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/"Radna površina"/helpmanual.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Help Manual - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Scrivania/helpmanual.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Help Manual - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/デスクトップ/helpmanual.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Help Manual - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/바탕화면/helpmanual.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Help Manual - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Bureaublad/helpmanual.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Help Manual - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Pulpit/helpmanual.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Help Manual - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Desktop/helpmanual.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Help Manual - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/"Área de Trabalho"/helpmanual.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Help Manual - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/"Рабочий стол"/helpmanual.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Help Manual - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/"Радна површина"/helpmanual.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Help Manual - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Skrivbord/helpmanual.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Help Manual - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/Стільниця/helpmanual.desktop 2>/dev/null
+fi
+
+echo $desktopicons | grep "Help Manual - Disable" > /dev/null
+if [ $? = 0 ];then
+    rm /home/$USER/桌面/helpmanual.desktop 2>/dev/null
+fi
+
+exit 0

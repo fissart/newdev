@@ -1,0 +1,41 @@
+#!/bin/bash
+#--------------------------------------------
+# Description: Linux Lite Auto Login Dialogue
+# Authors: Jerry Bezencon, Ralphy
+# Website: https://www.linuxliteos.com
+#--------------------------------------------
+
+# variables
+APPNAME="Enable Auto Login"
+ic="/usr/share/icons/Papirus/24x24/apps/liteautologin.png"		# dialog icon 24x24 PNG
+EALUSER=$(whoami)
+TMPF="/tmp/autologin"
+if [ ! -f "$TMPF" ]; then echo "$EALUSER" > "$TMPF"; chmod 600 "$TMPF"; else :; fi
+if [ $EUID -ne 0 ]; then pkexec $0; if [ "${PIPESTATUS[@]}" -eq "126" ]; then rm -f "$TMPF"; fi; exit; else :; fi
+
+while (true); do
+ALUSER=$(cat "$TMPF")
+# Main window dialogue.
+zenity --question --icon-name="info" --window-icon="$ic" --ok-label="$APPNAME" --cancel-label="Cancel" --width="400" --height="60" --title="$APPNAME" \
+       --text='<span font="12">You are about to Enable Auto Login</span>\n \
+Next time your computer is restarted you will be automatically signed in. \n \
+<b>Important</b> : The Auto Login feature is provided for convenience.\nHowever, this feature could be considered a security risk.\n \
+When Auto Login is enabled, anyone who can physically obtain access to the computer can gain\naccess to all its content including any networks it is connected to.\nThis setting is recommended only for cases in which the computer is physically secured.' 2>/dev/null
+
+if [ "$?" -eq "0" ]; then
+    sed -i "s/autologin-user=.*/autologin-user=$ALUSER/g" /etc/lightdm/lightdm.conf
+    rm -f "$TMPF"
+    if [ "${PIPESTATUS[0]}" -eq "0" ]; then
+      zenity --info --width="240" --height=40 --timeout=3 --title="   $APPNAME" --window-icon=$ic --text="\nAuto Login has been enabled." 2>/dev/null
+      exit 0
+    else
+      zenity --error --width="320" --height="40" --title="$APPNAME - Error" --text="\nAn error occurred while enabling Auto Login." 2>/dev/null
+      rm -f "$TMPF"
+      continue
+    fi
+else
+    rm -f "$TMPF"
+    exit 0
+fi
+done
+exit 0

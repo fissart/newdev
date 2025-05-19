@@ -1,0 +1,111 @@
+#!/usr/bin/perl
+
+=head1 NAME
+
+gen-preseed -- output preseed based on installation debconf DB
+
+=head1 SYNOPSIS
+
+gen-preseed
+
+=head1 DESCRIPTION
+
+Output a preseed file based on the installation debconf DB.
+This requires /var/log/installer/cdebconf to exist.
+
+=cut
+
+use strict;
+use warnings;
+use Debconf::Db;
+use Debconf::Template;
+use Debconf::Question;
+
+# A bit of a hack..
+my $di_path;
+if (-d "/var/log/installer") {
+    $di_path="/var/log/installer/cdebconf";
+} else {
+    $di_path="/var/log/debian-installer/cdebconf";
+}
+
+if (! -f "$di_path") {
+    print("Unable to find debconf database: $di_path\n");
+    exit(1);
+}
+
+Debconf::Db->load(readonly => "true");
+
+$Debconf::Db::config=Debconf::Db->makedriver(
+    driver => "File", 
+    name => "di_questions",
+    filename => "$di_path/questions.dat",
+    readonly => "true",
+);
+$Debconf::Db::templates=Debconf::Db->makedriver(
+    driver => "File", 
+    name => "di_templates",
+    filename => "$di_path/templates.dat",
+    readonly => "true",
+);
+
+my $defaultowner="d-i";
+my @blacklist = (
+                    # No partitioning preseeding at this point
+                    "partman-",
+
+                    # d-i state
+                    "clock-setup/system-time-changed",
+                    "debian-installer/main-menu",
+
+                    # Value depends on hardware
+                    "netcfg/choose_interface",
+
+                    # Value depends on install media
+                    "base-installer/kernel/image",
+                    "base-installer/kernel/override-image",
+                    "cdrom/codename",
+                    "cdrom-detect/cdrom_device",
+                    "hw-detect/select_modules",
+                    "preseed/file",
+                );
+my $qi = Debconf::Question->iterator;
+
+my @keys = ();
+
+while (my $q = $qi->iterate) {
+    my ($name, $type, $value, $default) = ($q->name, $q->type, $q->value, $q->default);
+    next if ($default eq $value);
+    next if (! length $type || $type eq 'text' || $type eq 'title');
+
+    my $skip = 0;
+    foreach (@blacklist) {
+        if ($name =~ m/^$_/) {
+            $skip = 1;
+        }
+    }
+    next if ($skip eq 1);
+
+    if ($q->owners) {
+        foreach my $owner (split ", ", $q->owners) {
+            push(@keys, "$owner\t$name\t$type\t$value\n");
+        }
+    }
+    else {
+        push(@keys, "$defaultowner\t$name\t$type\t$value\n");
+    }
+}
+
+foreach(sort(@keys)) {
+    print "$_";
+}
+
+=head1 AUTHOR
+
+Written by:
+  Stéphane Graber <stgraber@ubuntu.com>
+
+Based on debconf-get-selections by:
+  Petter Reinholdtsen <pere@hungry.com>
+
+=cut

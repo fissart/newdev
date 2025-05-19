@@ -1,0 +1,112 @@
+#!/bin/bash
+#--------------------------------------------
+# Description: Linux Lite Network Shares GUI Dialogue
+# Author: Jerry Bezencon 2015, Ralphy
+# Website: https://www.linuxliteos.com
+#--------------------------------------------
+
+# Variables
+APPNAME="Lite Network Shares"
+ic="/usr/share/icons/Papirus/24x24/apps/litenetworkshares.png"		# Lite Network Shares icon variable
+host=$(hostname)
+SMBCONF=/etc/samba/smb.conf
+TMPF=/tmp/testparm.txt
+
+if [ $EUID -ne 0 ]; then pkexec $0; exit; else :; fi
+# backup smb.conf file
+if ! [ -f "$SMBCONF.bak" ]; then cp $SMBCONF $SMBCONF.bak; fi
+# set netbios name to hostname in smb.conf
+cat "$SMBCONF" | grep -Fx "netbios name = $host" > /dev/null
+if [[ $? -eq 0 ]]; then :; else
+  sed -i "s/netbios name =.*/netbios name = $host/" $SMBCONF
+  sleep 3 | zenity --progress --title="$APPNAME" --text="Updating Samba netbios name. Please wait..." --pulsate --no-cancel --width="340" --auto-close
+fi
+# add firewall rule
+sudo ufw allow Samba > /dev/null & 2>&1
+
+zenity --question --width="480"  --icon-name="info" --ok-label="Edit share settings" --cancel-label="Quit" --title="$APPNAME" --window-icon="$ic" \
+       --text="\nSamba is the software suite that provides seamless file and print services to SMB/CIFS clients. It allows for interoperability between Linux/Unix and Windows-based clients.\n\n
+<b>Reload configuration</b>: When the smb.conf file is changed, Samba automatically reloads it after a few minutes. Issuing a manual reload or restart is just as effective, causing changes to take effect immediately.
+* Network share services are not interrupted while issuing a reload.\n
+<b>Restart services</b>: The restart option is a quick way of stopping and then starting Samba. This is the most reliable way to make configuration changes take effect after editing the configuration file.
+* Network share services are temporarily interrupted while restarting the services.\n" 2>/dev/null
+
+if [ "$?" -eq "0" ]; then $EDITSHARES; else exit 0; fi
+
+# the loop
+while (true); do
+# edit share
+EDITSHARES=$(xdg-open $SMBCONF ) &&
+# md5sum variables
+fingerprintfile=/tmp/.md5savefile
+# create the smb.conf md5sum
+filemd5=`md5sum $SMBCONF | cut -d " " -f1`
+# test smb.conf
+testparm -s /etc/samba/smb.conf 2>&1 | egrep 'Unknown|Ignoring|WARNING|NOTE:|set_variable_helper|Error loading services' >> $TMPF
+# samba testconfig function
+testconfig() {
+if [ -s $TMPF ]; then
+    review=$(zenity --text-info --window-icon="warning" --ok-label="Review configuration" --cancel-label="Continue" --width="460" --height="240" --filename="/tmp/testparm.txt" --title="Configuration errors found" 2>/dev/null ; echo $?)
+    if [ "$review" -eq "0" ]; then
+      rm -f $TMPF
+      continue
+    else
+      egrep 'Error loading services' $TMPF
+      if [ "$?" -eq "0" ]; then
+        rm -f $TMPF
+        zenity --error --width="360" --height="80" --text="\nThe current errors in the configuration will not allow Samba services to run.\n\nPlease correct the configuration." 2>/dev/null
+        continue
+       fi
+    fi
+else
+echo "$APPNAME - Syntax OK"
+fi
+}
+# call testconfig function
+testconfig
+# warn user when non-critical configuration errors are found
+egrep 'Unknown|Ignoring|WARNING|NOTE:' $TMPF
+if [ "$?" -eq "0" ]; then
+  zenity --warning --width="360" --height="80" --text="\nErrors were found in the configuration.\n\nYou may not be able to access Samba shares until the configuration is corrected." 2>/dev/null
+fi
+# finally remove temp file
+rm -f $TMPF
+# Is there a saved fingerprint of the config file?
+if [ -f $fingerprintfile ];then
+  # get the saved md5"
+  savedmd5=`cat $fingerprintfile`
+  # compare md5's
+  if [[ "$savedmd5" == "$filemd5" ]]; then
+    zenity --info --timeout="3" --title="$APPNAME" --width="320" --text="\nNo changes to the configuration were made." 2>/dev/null
+    exit 0
+  else
+    :
+  fi
+fi
+# save the current md5
+echo $filemd5 > $fingerprintfile
+
+zenity --question --width="360"  --icon-name="info" --default-cancel --cancel-label="Reload configuration" --ok-label="Restart services" --title="$APPNAME" --window-icon="$ic" \
+       --text="\nChanges in the configuration file have been detected.\n
+When the configuration file is modified, Samba automatically reloads it after a few minutes. You can manually reload or restart the services \
+for changes to apply immediately.\n" 2>/dev/null
+
+if [ "$?" -eq "1" ]; then
+  killall -HUP smbd nmbd &&
+zenity --info --timeout="3" --title="$APPNAME" --width="260" --text="\nThe configuration has been reloaded." 2>/dev/null
+exit
+else
+  RESTARTSHARES=$( stdbuf -oL /bin/bash \-c '(systemctl restart smbd nmbd && sleep .5 )' 2>&1 |
+  stdbuf -oL sed -n -e 's/^\(.\{128\}\).*/\1/' -e '/\[*$/ s/^/# /p' -e '/\*$/ s/^/# /p' |
+  zenity --progress --title="$APPNAME" --text="✔ Restarting network share services..." --pulsate --no-cancel --width=340 --auto-close 2>/dev/null )
+  unset RESTARTSHARES
+      if [ "${PIPESTATUS[0]}" -ne "0" ]; then
+        zenity --error --title="Error" --text="$APPNAME configuration failed." 2>/dev/null
+        exit 0
+      else
+          zenity --info --timeout="5" --title="$APPNAME" --window-icon="$ic" --width="260" --text="\nYour settings have been applied.\nSamba services have been restarted." 2>/dev/null
+          exit 0
+      fi
+    fi
+done
+exit 0

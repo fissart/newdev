@@ -1,6 +1,8 @@
 const notesww = {};
 const fs = require("fs");
 const Note = require("../models/chat.model");
+const Average = require("../models/average.model");
+const Cursesource = require("../models/cursesource.model");
 
 notesww.getUwww = async (req, res) => {
   const { ciclo, mencion, year } = req.params;

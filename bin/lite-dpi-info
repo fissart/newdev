@@ -1,0 +1,15 @@
+#! /bin/bash
+#--------------------------------------------------------------------------------------------------------
+# Name: Linux Lite - HiDPI Settings - Info
+# Show DPI/Percentages
+# Architecture: all
+# Author: Jerry Bezencon
+# Website: https://www.linuxliteos.com
+#--------------------------------------------------------------------------------------------------------
+
+# Variables
+ic="/usr/share/icons/Papirus/24x24/apps/liteicon.png"
+
+yad --window-icon="$ic" --text-align="center" --text="<b>DPI/Percentages:</b>\n\n<b>DPI:</b>   96	<b>Percentage:</b>   100%\n<b>DPI:</b>   120	<b>Percentage:</b>   125%\n<b>DPI:</b>   144	<b>Percentage:</b>   150%\n<b>DPI:</b>   168	<b>Percentage:</b>   175%\n<b>DPI:</b>   192	<b>Percentage:</b>   200%" --borders="20" --title "     HiDPI Info" --width=360
+
+exit 0

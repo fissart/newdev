@@ -1,0 +1,30 @@
+#!/bin/bash
+#--------------------------------------------
+# Description: Linux Firewall Config Dialogue  - Enable
+# Authors: Jerry Bezencon
+# Website: https://www.linuxliteos.com
+#--------------------------------------------
+
+ic="/usr/share/icons/Papirus/24x24/apps/firewall-config.svg"		# dialog icon 24x24 PNG
+
+(
+  echo 25
+  systemctl unmask --now firewalld
+  echo "# Unmasking Firewall..."
+  sleep 2
+
+  echo 50
+  systemctl enable firewalld
+  echo "# Enabling Firewall..."
+  sleep 2
+
+  echo 75
+  systemctl start firewalld
+  echo "# Starting Firewall..."
+  sleep 1
+
+  echo 100
+  echo "# The Firewall has been Enabled. Click OK to finish."
+) | zenity --title "FirewallD" --window-icon=$ic --progress --no-cancel --width=400 --auto-kill
+
+exit 0

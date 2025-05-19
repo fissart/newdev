@@ -12,22 +12,23 @@ extend(geometry)
 // const medium = import('@pmndrs/assets/fonts/inter_medium.woff')
 
 export const Www = () => (
-  <Canvas flat camera={{ fov: 75, position: [0, 0, 20] }} eventSource={document.getElementById('root')} eventPrefix="client">
-    <color attach="background" args={['#e7e6ed']} />
-    <Frame id="01" name={`Escul\ntura`} author="Ricardo MB" bg="#e4cdac" position={[-1.15, 0, 0]} rotation={[0, 0.5, 0]}>
-      <Gltf src="fiesta_tea-transformed.glb" position={[0, -2, -3]} />
+  <Canvas flat camera={{ fov: 55, position: [0, 0, 20] }} eventSource={document.getElementById('root')} eventPrefix="client">
+    <color attach="background" args={['#fff']} />
+    <Frame id="01" name={`Escultura`} author="Ricardo MB" bg="#e4cdac" position={[-1.15, 0, 0]} rotation={[0, 0.3, 0]}>
+      <Gltf src="www-transformed.glb" scale={.2} position={[0, -.2, -5]} />
     </Frame>
     {/* <Frame id="02" name="ok" author="Omar Faruq Tawsif"  position={[1.15, 0, -1.15]} rotation={[0, 3.15, 0]}>
       <Gltf src="burgerpiz.glb" position={[0, -19, -3]} />
     </Frame>
-    <Frame id="03" name="tea" author="Omar Faruq Tawsif" position={[0, 0, -2.15]} rotation={[0, 0, 0]}>
-      <Gltf src="helmet.glb"  scale={1} position={[-.1, .3, -1.8]} />
-    </Frame> */}
-    <Frame id="02" name={`Pin\ntura`} author="Ricardo" bg="#e4cdac" >
-      <Gltf src="new.glb" position={[0, -2, -3]} />
+    */}
+    <Frame id="02" name={`Pintura`} author="Omar Faruq Tawsif" position={[0, 0, -.15]} rotation={[0, 0, 0]}>
+      <Gltf src="fiesta_tea-transformed-transformed.glb" scale={1} position={[0, -2, -3]} />
     </Frame>
-    <Frame id="03" name={`Gra\nbado`} author="Www" bg="#d1d1ca" position={[1.15, 0, 0]} rotation={[0, -0.5, 0]}>
-      <Gltf src="2sdcasdscdcsd3i_glb.glb" scale={1.6} position={[-.1, 0, -2.1]} rotation={[0, 0.9, 0]}/>
+    <Frame id="03" name={`Grabado`} author="Www" bg="#d1d1ca" position={[1.15, 0, 0]} rotation={[0, -0.3, 0]}>
+      <Gltf src="the_works_of_william_shakespeare-transformed.glb" scale={1} position={[0, .2, -3]} />
+    </Frame>
+    <Frame id="04" name={`Educación\n\nartística`} author="Ricardo" bg="#e4cdac"  position={[0, -1.8, -.15]}>
+      <Gltf src="house.glb" position={[-.1, .3, -1.8]}/>
     </Frame>
     <Rig />
     <Preload all />
@@ -43,7 +44,7 @@ function Frame({ id, name, author, bg, width = 1, height = 1.61803398875, childr
   useFrame((state, dt) => easing.damp(portal.current, 'blend', params?.id === id ? 1 : 0, 0.2, dt))
   return (
     <group {...props}>
-      <Text fontSize={0.3} anchorY="top" anchorX="left" lineHeight={0.8} position={[-0.375, 0.715, 0.01]} material-toneMapped={false}>
+      <Text fontSize={0.15} anchorY="top" anchorX="left" lineHeight={0.8} position={[-0.375, 0.715, 0.01]} material-toneMapped={false}>
         {name}
       </Text>
       <Text fontSize={0.1} anchorX="right" position={[0.4, -0.659, 0.01]} material-toneMapped={true}>
@@ -63,7 +64,7 @@ function Frame({ id, name, author, bg, width = 1, height = 1.61803398875, childr
   )
 }
 
-function Rig({ position = new THREE.Vector3(0, 0, 2), focus = new THREE.Vector3(0, 0, 0) }) {
+function Rig({ position = new THREE.Vector3(0, 0, 5), focus = new THREE.Vector3(0, -.8, 0) }) {
   const { controls, scene } = useThree()
   const [, params] = useRoute('/item/:id')
   useEffect(() => {

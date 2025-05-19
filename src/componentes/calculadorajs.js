@@ -3,12 +3,13 @@
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 
-const ExportToExcel = ({ data, fileName }) => {
+const ExportToExcel = ({ data, year, ciclo, mencion }) => {
 
- 
+  console.log(data)
+
   const exportExcel = async () => {
-    console.log("www")
-    fetch(process.env.REACT_APP_URL + '/api/4/ED/2024')
+    // console.log(data)
+    fetch(process.env.REACT_APP_URL + '/api/' + ciclo + '/ED/' + year)
       .then((response) => response.json())
       .then(async (www) => {
 
@@ -45,27 +46,27 @@ const ExportToExcel = ({ data, fileName }) => {
 
         for (var k = 0; k < user.length; k++) {
           var calification = ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]
-          console.log(user[k].records)
+          // console.log(user[k].records)
 
           for (var i = 0; i < user[k].records.length; i++) {
-            calification.splice(2 * codigo.indexOf(user[k].records[i].codigo), 1, user[k].records[i].nota)
-            calification.splice(2 * codigo.indexOf(user[k].records[i].codigo) + 1, 1, user[k].records[i].nota * user[k].records[i].credito)
+            calification.splice(2 * codigo.indexOf(user[k].records[i].codigo), 1, user[k].records[i].nota=='-1'?user[k].records[i].nota:Number(user[k].records[i].nota))
+            calification.splice(2 * codigo.indexOf(user[k].records[i].codigo) + 1, 1, Number(user[k].records[i].nota * user[k].records[i].credito))
 
           }
           calification.splice(26, 1, user[k].total)
           calification.splice(27, 1, creditosuma)
           calification.splice(28, 1, user[k].total / creditosuma)
           // console.log(calification.sort((a, b) => a - b))
-          var www = [user[k].total, user[k].usser.length > 0 ? user[k].usser[0].dni : "", user[k].usser.length > 0 ? user[k].usser[0].name : ""].concat(calification)
+          var www = [k+1, user[k].usser.length > 0 ? user[k].usser[0].dni : "", user[k].usser.length > 0 ? user[k].usser[0].name : ""].concat(calification)
           notas.push(www)
         }
         // console.log(notas.sort((a, b) => b[1] - a[1]))
         console.log(notas)
         // console.log(cursses)
-        const ciclo = user[1].ciclo
-        const year = user[1].year
+        // const ciclo = user[1].ciclo
+        // const year = user[1].year
 
-        const mencion = user[1].mencion == "ED" ? "EDUCACIÓN ARTÍSTICA - ARTES PLÁSTICAS" : user[1].mencion == "P" ? "ARTISTA PROFESIONAL - ARTES PLÁSTICAS Y VISUALES (PINTURA)" : user[1].mencion == "E" ? "ARTISTA PROFESIONAL - ARTES PLÁSTICAS Y VISUALES (ESCULTURA)" : "ARTISTA PROFESIONAL - ARTES PLÁSTICAS Y VISUALES (GRABADO)"
+        const menccion = mencion == "ED" ? "EDUCACIÓN ARTÍSTICA - ARTES PLÁSTICAS" : mencion == "P" ? "ARTISTA PROFESIONAL - ARTES PLÁSTICAS Y VISUALES (PINTURA)" : mencion == "E" ? "ARTISTA PROFESIONAL - ARTES PLÁSTICAS Y VISUALES (ESCULTURA)" : "ARTISTA PROFESIONAL - ARTES PLÁSTICAS Y VISUALES (GRABADO)"
 
         var amautas1 = amautas.slice(0, 6);
         var amautas2 = amautas.slice(6, amautas.length);
@@ -115,7 +116,7 @@ const ExportToExcel = ({ data, fileName }) => {
           editAs: 'absolute'
         });
         // worksheet.addImage(logo, 'AH1:AI9');
-        
+
 
         [
           'C4',
@@ -209,7 +210,7 @@ const ExportToExcel = ({ data, fileName }) => {
 
         worksheet.mergeCells('C14:G14');
         worksheet.mergeCells('C15:G15');
-        worksheet.getCell('C14').value = "mencion";
+        worksheet.getCell('C14').value = menccion;
         worksheet.getCell('C15').value = 'R. Nº 0266-2012 - ANR - 13-03-2012';
 
         worksheet.mergeCells('H14:L14');
@@ -219,8 +220,8 @@ const ExportToExcel = ({ data, fileName }) => {
 
         worksheet.mergeCells('M14:O14');
         worksheet.mergeCells('M15:O15');
-        worksheet.getCell('M14').value = "year";
-        worksheet.getCell('M15').value = "ciclo";
+        worksheet.getCell('M14').value = year;
+        worksheet.getCell('M15').value = ciclo;
 
         //////////////////////////////////
 
@@ -807,8 +808,12 @@ const ExportToExcel = ({ data, fileName }) => {
               bottom: { style: 'medium' },
               right: { style: 'medium' }
             };
-                     worksheet.getCell(key).alignment = { vertical: 'middle', horizontal: 'center' };
-
+            if (key != 'C' + x ){
+              worksheet.getCell(key).alignment = { vertical: 'middle', horizontal: 'center' };
+            }
+            if (key == 'C19' || key == 'C57' ){
+              worksheet.getCell(key).alignment = { vertical: 'middle', horizontal: 'center' };
+            }
           })
         }
 
@@ -918,7 +923,7 @@ const ExportToExcel = ({ data, fileName }) => {
 
 
         for (let x = 11; x <= 11 + 99; x++) {
-          const number = [ 95, 96, 97, 98, 99, 100, 101]
+          const number = [95, 96, 97, 98, 99, 100, 101]
           if (number.includes(x)) {
             worksheet.getRow(x).height = 21.5;
           } else {
@@ -926,7 +931,7 @@ const ExportToExcel = ({ data, fileName }) => {
           }
           worksheet.getRow(21).height = 110;
           worksheet.getRow(59).height = 110;
-  
+
           worksheet.getRow(x).font = { name: 'arial', family: 4, size: 11 }
           // worksheet.getRow(x).alignment = { vertical: 'middle', horizontal: 'center' };
         }
@@ -950,14 +955,14 @@ const ExportToExcel = ({ data, fileName }) => {
 
         const buffer = await workbook.xlsx.writeBuffer();
         const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-        saveAs(blob, `${fileName}www.xlsx`);
+        saveAs(blob, `${year}.xlsx`);
       });
 
   };
 
   return (
     <>
-      <button onClick={exportExcel}>www</button>
+      <button onClick={exportExcel}>Download Excel</button>
     </>
   );
 };

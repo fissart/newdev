@@ -10,8 +10,13 @@ import 'katex/dist/katex.min.css';
 import Markdown from "./markdownwww";
 import logo from '../logo.png';
 // import logo from '../logo.svg';
+import { useRoute } from 'wouter'
+import { Link } from 'react-router-dom';
 
 function App() {
+  const [, params] = useRoute('/item/:id')
+  // const [, setLocation] = useLocation()
+
   const [www, setWww] = useState()
   const [id, setId] = useState()
   const [edit, setEdit] = useState()
@@ -84,7 +89,7 @@ function App() {
     <div key={number._id}>
       {number._id !== id ?
         <div style={{ backgroundColor: 'rgb(225,225,228)' }} className="card" key={number._id}>
-          {localStorage.getItem("user")&&JSON.parse(localStorage.getItem("user")).rol=='1' ? <><button onClick={() => wwdelete(number._id)}>Errase</button>
+          {localStorage.getItem("user") && JSON.parse(localStorage.getItem("user")).rol == '1' ? <><button onClick={() => wwdelete(number._id)}>Errase</button>
             <button onClick={() => { setId(number._id); setEdit(number.description) }}>Editar</button></> : null}
           <Markdown>{number.description.replace(/(<oembed url="https:\/\/www.dailymotion.com\/video\/)(.*?)(".*?oembed>)/g, `<iframe width='100%' height='350' src="https://www.dailymotion.com/embed/video/$2"></iframe>`).replace(/(<oembed url="https:\/\/www.youtube.com\/watch\?v=)(.*?)(".*?oembed>|&.*?oembed>)/g, `<iframe width='100%' height='350' src="https://www.youtube.com/embed/$2"></iframe>`).replace(/(<script type="math\/tex; mode=display">)(.*?)(<\/script>)/g, "\n\n$$$$\n\n$2\n\n$$$$\n\n").replace(/(<p><script type="math\/tex">)(.*?)(<\/script><\/p>)/g, "$$$2$$").replace(/(<blockquote>)/g, "\n > ").replace(/(<\/blockquote>)/g, "\n\n ").replace(/<a href="(.*?)">(.*?)(<\/a>)/g, "[$2]($1)")}
           </Markdown>
@@ -111,23 +116,19 @@ function App() {
 
 
   return (
-    <><div style={{ height: '19cm', width: '100%', textAlign: 'center', margin: 'auto', display: 'block' }}>
-      <Www />
-      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}>
-        {/* <a href="https://pmnd.rs/" style={{ position: 'absolute', bottom: 40, left: 90, fontSize: '13px' }}>
-          pmnd.rs
-          <br />
-          dev collective
-        </a> */}
-        <div style={{ position: 'absolute', bottom: 40, right: 40, fontSize: '13px' }}>15/03/2025</div>
-        <img src={logo} style={{ position: 'absolute', bottom: 40, left: 40, width: 39 }} alt="logo" />
+    <>
+      <div style={{ position: 'absolute', top: 0, left: 0, height: '19cm', width: '100%', textAlign: 'center', margin: 'auto', display: 'block' }}>
+        <Www />
+        <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}>
+          {!params ? <span style={{ position: 'absolute', top: 90, left: 40 }}>
+            Doble click para entrar al portal
+          </span> : <Link style={{ position: 'absolute', top: 90, left: 40 }} href="/linea">Atrás</Link>}
+          <img src={logo} style={{ position: 'absolute', bottom: 40, left: 40, width: 39 }} alt="logo" />
+        </div>
       </div>
-
-    </div>
-
-      <div className="contenedor">
+      <div className="contenedor" style={{marginTop:'21cm'}}>
         <div style={{ margin: 'auto', display: 'block', textAlign: 'right' }}>
-          {localStorage.getItem("user")&&JSON.parse(localStorage.getItem("user")).rol=='1' ? <button onClick={() => wwwww()}>Crear</button> : <></>}
+          {localStorage.getItem("user") && JSON.parse(localStorage.getItem("user")).rol == '1' ? <button onClick={() => wwwww()}>Crear</button> : <></>}
         </div>
         <div>{listItems}</div>
 

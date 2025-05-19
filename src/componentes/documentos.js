@@ -10,27 +10,27 @@ import Markdown from "./markdownwww";
 import logo from '../logo.png';
 // import './App.css';
 function App() {
-  const [www, setWww] = useState()
-  const [id, setId] = useState()
-  const [edit, setEdit] = useState()
-  // setFormData({ ...formData, rol:"3", name:"www", email:"www", foto:"www", password:"www" })
-  useEffect(() => {
-    get()
-  }, []);
+    const [www, setWww] = useState()
+    const [id, setId] = useState()
+    const [edit, setEdit] = useState()
+    // setFormData({ ...formData, rol:"3", name:"www", email:"www", foto:"www", password:"www" })
+    useEffect(() => {
+      get()
+    }, []);
 
 
-  const get = () => {
-    fetch(process.env.REACT_APP_URL + "/api/links/editor/DOCUMENTOS")
-      .then((response) => response.json())
-      .then((www) => {
-        setWww(www); // ⬅️ Guardar datos
-        console.log(www)
-      })
-      .then(response => response.json())
-      // .then(data => { toast.warning(data); get() })
-      .catch(error => console.error(error));
+    const get = () => {
+      fetch(process.env.REACT_APP_URL + "/api/links/editor/DOCUMENTOS")
+        .then((response) => response.json())
+        .then((www) => {
+          setWww(www.reverse()); // ⬅️ Guardar datos
+          console.log(www)
+        })
+        .then(response => response.json())
+        // .then(data => { toast.warning(data); get() })
+        .catch(error => console.error(error));
 
-  }
+    }
 
   const wwwww = () => {
     fetch(process.env.REACT_APP_URL + '/api/links', {
@@ -117,7 +117,7 @@ function App() {
       </div>
       <div>{listItems}</div>
       <ToastContainer
-        position="top-right" autoClose={1000} hideProgressBar={false} newestOnTop={false} closeOnClick={true} rtl={false} pauseOnFocusLoss={false} draggable pauseOnHover={false} closeButton={false}
+        position="bottom-right" autoClose={1000} hideProgressBar={false} newestOnTop={false} closeOnClick={true} rtl={false} pauseOnFocusLoss={false} draggable pauseOnHover={false} closeButton={false}
       />
       {/* <img src={logo} className="App-logo" alt="logo" /> */}
 
