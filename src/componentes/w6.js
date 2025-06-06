@@ -9,8 +9,9 @@ import { useParams } from 'react-router-dom'
 //https://simonbengtsson.github.io/jsPDF-AutoTable/#content/
 //http://raw.githack.com/MrRio/jsPDF/master/index.html
 //https://github.com/simonbengtsson/jsPDF-AutoTable/blob/799cd737d7491155d0914e7b0dfb093976d16b21/examples/examples.js
+
 const NoPage = () => {
-  const { id } = useParams();
+  const { id, idc } = useParams();
   const [wwwww, setWww] = useState()
   // console.log(wwwww.title)
   useEffect(() => {
@@ -103,13 +104,14 @@ const NoPage = () => {
                   <div style={{ backgroundColor: 'cyan', padding: '.1cm', margin: '.2cm', width: '7cm' }} key={tms._id}>
                     <div style={{ backgroundColor: 'white', fontSize: '15px', padding: '.1cm', textAlign: 'center' }}>{tms.title}</div>
                     <div style={{ backgroundColor: 'white', fontSize: '13px', padding: '.1cm', textAlign: 'center' }}>{tms.task}</div>
+                    <div style={{ backgroundColor: 'white', fontSize: '13px', padding: '.1cm', textAlign: 'center' }}>{tms._id}</div>
                     <div style={{ backgroundColor: 'white', fontSize: '13px', padding: '.1cm', textAlign: 'center' }}>{tms.ciclo} {tms.credito} {tms.year} {tms.mencion}</div>
                     <div style={{ backgroundColor: 'white', fontSize: '13px', padding: '.1cm', textAlign: 'center' }}>{tms.codigo}</div>
                     {localStorage.getItem("user") && JSON.parse(localStorage.getItem("user")).rol == '2' ?
                       <div style={{ alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', display: 'flex' }}>
                         <button onClick={() => wwdelete(tms._id)}>errase</button>
                         {/* <button onClick={() => update(tms._id)}>update</button>  */}
-                        <button><Link style={{ color: 'black' }} to={'/curso/' + tms._id} onClick={() => localStorage.setItem('curse', tms._id)} >
+                        <button><Link style={{ color: 'black' }} to={`/tema/${tms._id}`} onClick={() => localStorage.setItem('curse', tms._id)} >
                           Ir a la secion
                         </Link></button>
                       </div> : null}

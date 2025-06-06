@@ -2,20 +2,27 @@ const { Schema, model } = require("mongoose");
 
 const userSchema = new Schema(
   {
-    chapter: {
-      type: Schema.Types.ObjectId
-    },
     title: { type: String },
-    description: { type: String},
+    description: { type: String },
+    img: { type: String },
+    test: { type: String },
+    codecurse: { type: String },
     task: { type: String },
-    dateb: { type: String },
-    datee: { type: String },
-    fechaexa: Date,
-    timexa: Number,
+    time: { type: String },
+    timeex: { type: String },
+    conceptual: { type: String },
+    procedimental: { type: String },
+    actitudinal: { type: String },
+    curse: {
+      type: Schema.Types.ObjectId,
+    },
+    user: {
+      type: Schema.Types.ObjectId,
+    }
   },
   {
     timestamps: true,
   }
 );
 
-module.exports = model("Theme", userSchema);
+module.exports = model("Themes", userSchema);

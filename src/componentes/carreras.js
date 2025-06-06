@@ -126,7 +126,7 @@ function App() {
           <img src={logo} style={{ position: 'absolute', bottom: 40, left: 40, width: 39 }} alt="logo" />
         </div>
       </div>
-      <div className="contenedor" style={{marginTop:'21cm'}}>
+      <div className="contenedor" style={{ marginTop: '21cm' }}>
         <div style={{ margin: 'auto', display: 'block', textAlign: 'right' }}>
           {localStorage.getItem("user") && JSON.parse(localStorage.getItem("user")).rol == '1' ? <button onClick={() => wwwww()}>Crear</button> : <></>}
         </div>

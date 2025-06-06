@@ -1,5 +1,6 @@
 const User = require("../models/auth.model");
 const Mycurse = require("../models/mycurse.model");
+const Average = require("../models/average.model");
 const expressJwt = require("express-jwt");
 
 const fs = require("fs");
@@ -18,6 +19,50 @@ exports.getAllUsers = async (req, res) => {
   res.json(ww);
 };
 
+
+
+
+exports.stdCalifications = async (req, res) => {
+  const { ObjectId } = require("mongodb");
+  const user = ObjectId(req.params.id)
+  console.log(user,"wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww")
+  const data = await Average.aggregate([
+    {
+      $match: {
+        user: user,
+      },
+    },
+    {
+       $group: {
+        _id: "$ciclo",
+        notas: { $sum: 1 },
+        mencion: { $first: '$mencion' },
+        sumacreditos: { "$sum": { $multiply: [1, { $toInt: '$credito' }] } },
+        sumanotas: { "$sum": { $multiply: [1, { $toInt: '$nota' }] } },
+        total: { "$sum": { $multiply: [{ $toInt: '$credito' }, { $toInt: '$nota' }] } },
+        records: { $push: "$$ROOT" }
+      }
+    },
+    {
+      $lookup: {
+        from: "cursesources", let: { ciclo: "$_id", wwwww:"$mencion" },
+        pipeline: [
+          { $match: { $expr: { $and: [{ $eq: ["$ciclo", "$$ciclo"] }, { $eq: ["$mencion", "$$wwwww"] }] } } },
+        ],
+        as: "cursesource"
+      }
+    },
+    { $match: { details: { $ne: [] } } },
+    { $sort: { "_id": 1 } }
+  ])
+  // { $match: { user: user, }, }, 
+  // { $match: { user: user, }, }, 
+  // { $group: { _id: "$ciclo", total: { "$sum": { $multiply: [{ $toInt: '$credito' }, { $toInt: '$nota' }] } }, } },
+  // console.log(data)
+  //www
+  return res.json(data);
+}
+
 exports.usersController = async (req, res) => {
   const { ObjectId } = require("mongodb");
   const curse = ObjectId(req.params.user);
@@ -32,9 +77,13 @@ exports.usersController = async (req, res) => {
         as: "cursew",
       },
     },
-  ]);
-  res.json(users);
-};
+  ])
+  console.log(users)
+ 
+  res.json(users)
+}
+
+
 
 exports.usersCr = async (req, res) => {
   const { name, email, foto, role, password, curse } = req.body;

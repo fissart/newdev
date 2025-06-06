@@ -9,6 +9,7 @@ const {
 const {
   usersController,
   readController,
+  stdCalifications,
   updateController,
   usersId,
   usersCr,
@@ -17,6 +18,7 @@ const {
   DelUser,
 } = require("../controllers/user.controller");
 
+router.get("/stdnotes/:id", stdCalifications);
 router.get("/www/userAll", getAllUsers);
 router.get("/user/", requireSignin, usersController);
 router.get("/users/:user", usersController, usersId);

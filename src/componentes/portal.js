@@ -28,7 +28,7 @@ export const Www = () => (
       <Gltf src="the_works_of_william_shakespeare-transformed.glb" scale={1} position={[0, .2, -3]} />
     </Frame>
     <Frame id="04" name={`Educación\n\nartística`} author="Ricardo" bg="#e4cdac"  position={[0, -1.8, -.15]}>
-      <Gltf src="house.glb" position={[-.1, .3, -1.8]}/>
+      <Gltf src="fiesta_tea-transformed-transformed.glb" scale={1} position={[0, -2, -3]}/>
     </Frame>
     <Rig />
     <Preload all />

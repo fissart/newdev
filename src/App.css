@@ -221,9 +221,8 @@ th {
 .content {
   /* width: 334px;
   height: 216px; */
-  width: 100%;
-  height: 516px;
-  background: #5193ad;
+  width: 1216px;
+  height: 916px;
   border-radius: 5px;
   overflow-y: auto;
   padding: .5em;
@@ -231,7 +230,7 @@ th {
 
 .iniciocontenedor{
   background-color: rgb(196, 151, 68);
-  height: 18cm;
+  height: 100vh;
   /* margin: auto; */
 }
 

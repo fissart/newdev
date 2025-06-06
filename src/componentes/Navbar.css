@@ -5,7 +5,7 @@
     display: flex;
   }
 .App-logonew {
-    height: 9vmin;
+    height: 1cm;
     margin: 0%;
     pointer-events: none;
     display: flex;
@@ -20,11 +20,11 @@ nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: rgba(184, 209, 209, 0.178);
-    color: rgb(27, 10, 10);
+    background-color: rgba(8, 58, 58, 0.19);
+    color: rgb(233, 222, 222);
     position: sticky;
     top: 0;
-    z-index: 9999;
+    z-index: 9999999;
 }
 
 nav .title {
@@ -33,7 +33,7 @@ nav .title {
     padding: 0%;
     font-weight: bold;
     text-decoration: none;
-    color: rgb(29, 48, 80);
+    color: rgb(8, 25, 56);
 }
 
 nav ul {
@@ -47,7 +47,7 @@ nav ul li {
 nav ul li a {
     display: block;
     text-decoration: none;
-    color: black;
+    color: rgb(32, 10, 10);
     padding: 0.5rem;
     margin: 0 0.5rem;
     border-radius: 0.5rem;
@@ -76,7 +76,7 @@ nav .menu span {
 }
 
 
-@media (max-width: 480px) {
+@media (max-width: 680px) {
     nav .menu {
         display: flex;
     }
@@ -106,4 +106,9 @@ nav .menu span {
     nav ul li a {
         margin: 0.2rem 0.5rem;
     }
+
+    nav .title {
+        color: brown;
+    }
+
 }

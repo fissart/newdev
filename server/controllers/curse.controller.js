@@ -3,7 +3,8 @@ const fs = require("fs");
 
 const Curse = require("../models/curse.model");
 const User = require("../models/auth.model");
-const Link = require("../models/link.model");
+const Cursesource = require("../models/cursesource.model");
+const Integer = require("../models/mycurse.model");
 
 notesww.getUu = async (req, res) => {
   const notes = await Curse.find();
@@ -11,33 +12,66 @@ notesww.getUu = async (req, res) => {
 };
 
 notesww.createU = async (req, res) => {
-  const {
-    category,
-    nombre,
-    contenido,
-    tarea,
-    test,
-    fechaexamen,
-    fechatarea,
-    timexa,
-  } = req.body;
-  const newNote = new Curse({
-    category,
-    nombre,
-    contenido,
-    tarea,
-    test,
-    fechaexamen,
-    fechatarea,
-    timexa,
-  });
-  console.log(newNote);
-  await newNote.save();
+console.log(req.body)  // var cursor = db.cursesources.find();
+  const note = await Cursesource.find({
+    ciclo: "3",
+    mencion: "E",
+    codigo: "CAFVI203",
+  })
+
+  try {
+    const wwwww = new Integer({
+      "ciclo": note[0].ciclo,
+      "mencion": note[0].mencion,
+      "codigo": note[0].codigo,
+      "title": note[0].title,
+      "teoria": note[0].teoria,
+      "practica": note[0].practica,
+      "credito": note[0].credito,
+      "requisito": note[0].requisito,
+      "user": req.body.user,
+      "curse": req.body.curse,
+      "userteacher": req.body.userteacher,
+      "year": new Date(),
+      "description": "www3www",
+      "date": new Date()
+    })
+    // console.log(wwwww)
+    await wwwww.save()
+  } catch (err) {
+    console.error(err)
+  }
+  // Integer.insertMany(data)
+
+  // const {
+  //   category,
+  //   nombre,
+  //   contenido,
+  //   tarea,
+  //   test,
+  //   fechaexamen,
+  //   fechatarea,
+  //   timexa,
+  // } = req.body;
+  // const newNote = new Curse({
+  //   category,
+  //   nombre,
+  //   contenido,
+  //   tarea,
+  //   test,
+  //   fechaexamen,
+  //   fechatarea,
+  //   timexa,
+  // });
+  // console.log(newNote)
+  // await newNote.save()
   res.json("New Note added");
 };
 
-notesww.getU = async (req, res) => {
-  const note = await Curse.findById(req.params.id);
+notesww.getSTDcurses = async (req, res) => {
+  const note = await Integer.find({user:req.params.id});
+  console.log(note)
+
   res.json(note);
 };
 
@@ -93,7 +127,7 @@ notesww.getCURSOThemes = async (req, res) => {
   const { ObjectId } = require("mongodb");
   const curse = ObjectId(req.params.id);
   const user = ObjectId(req.params.idw);
-  console.log(curse,user)
+  console.log(curse, user)
   const Curseuser = await Curse.aggregate([
     {
       $match: {
@@ -242,7 +276,7 @@ notesww.getCURSOrefresh = async (req, res) => {
 };
 
 notesww.deleteU = async (req, res) => {
-  await Curse.findByIdAndDelete(req.params.id);
+  await Integer.findByIdAndDelete(req.params.id);
   res.json("Note Deleted");
 };
 

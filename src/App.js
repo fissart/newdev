@@ -7,6 +7,7 @@ import Blogs from "./componentes/dashboardwww";
 import Contact from "./componentes/conttacto";
 import NoPage from "./componentes/w5";
 import Www from "./componentes/w6"
+import Theme from "./componentes/w6 copy"
 import Editor from "./componentes/carreras"
 import Wwwww from "./componentes/wwcalculadora";
 import WwwwwW from "./componentes/message";
@@ -20,6 +21,7 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
           <Route path="/curso/:id" element={<Www/>} />
+          <Route path="/tema/:id" element={<Theme/>} />
           <Route path="blog" element={<Blogs />} />
           <Route path="documento" element={<Documentos />} />
           <Route path="www" element={<Www />} />

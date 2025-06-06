@@ -42,12 +42,12 @@ const Layout = () => {
                   <Link to="/blog" onClick={() => setMenuOpen(!menuOpen)}>Dashboard</Link>
                 </li>
                 <li>
-                  <a onClick={() => cerrar()}>cerrar</a>
+                  <a onClick={() => { cerrar(); setMenuOpen(!menuOpen) }}>cerrar</a>
                 </li>
               </>
               :
               <li>
-                <Link to="/contacto">Login</Link>
+                <Link to="/contacto" onClick={() => setMenuOpen(!menuOpen)}>Login</Link>
               </li>
           }
         </ul>

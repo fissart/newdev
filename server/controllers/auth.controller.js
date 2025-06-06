@@ -179,14 +179,14 @@ exports.signinController = async (req, res) => {
   const password = req.params.password
   const user = await User.findOne({ email });
   if (!user) //return res.status(401).send('The email doen\' exists');
-    return res.json({
-      user: { "msg": "El usuario no esta registrado" }
-    });
+    return res.json(
+      { "msg": "El usuario no esta registrado" }
+    );
   if (user.password !== password)// return res.status(401).send('Wrong Password');
-    return res.json({
-      user: { "msg": "Password incorrecto" }
-    });
-  return res.json( user );
+    return res.json(
+      { "msg": "Password incorrecto" }
+    );
+  return res.json(user);
 
   // const errors = validationResult(req);
   // if (!errors.isEmpty()) {

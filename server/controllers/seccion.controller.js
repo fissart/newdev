@@ -18,6 +18,7 @@ const upload = multer({ storage: storage }).single('file')
 
 
 
+
 const Note = require("../models/seccion.model");
 
 notesww.file = async (req, res) => {
@@ -44,7 +45,7 @@ notesww.file = async (req, res) => {
   myFile.mv(`files/images/${myFile.name}`, function (err) {
     if (err) {
       console.log(err)
-        return res.status(500).send({ msg: "Error occured" });
+      return res.status(500).send({ msg: "Error occured" });
     }
     // returing the response with file path and name
     return res.send({ name: myFile.name, path: `/${myFile.name}` });
@@ -81,62 +82,83 @@ notesww.createS = async (req, res) => {
 
 notesww.getSs = async (req, res) => {
   const { ObjectId } = require("mongodb");
-  const cursse = ObjectId(req.params.id);
+  const idtheme = ObjectId(req.params.id);
   const curssse = ObjectId(req.params.curssse);
+console.log(idtheme)
+
   const Curses = await Note.aggregate([
     {
       $match: {
-        _id: cursse,
+        _id: idtheme,
       },
     },
     {
       $lookup: {
-        from: "integers",
-        let: { w_ww: "$curse", ww_w: "$_id" },
+        from: "curses",
+        let: { w_1: "$curse" },
         pipeline: [
-          { $match: { $expr: { $eq: ["$curse", curssse] } } },
+          { $match: { $expr: { $eq: ["$_id", "$$w_1"] } } },
           {
             $lookup: {
               from: "users",
-              let: { www_: "$user" },
+              let: { w_ww: "$curse", ww_w: "$_id", www: "$ciclo", wwwww: "$mencion" },
               pipeline: [
-                { $match: { $expr: { $eq: ["$_id", "$$www_"] } } },
+                { $match: { $expr: { $and: [{ $eq: ["$ciclo", "$$www"] }, { $eq: ["$mencion", '$$wwwww'] },] } } },
                 {
                   $lookup: {
                     from: "tasks",
                     let: { w_ww: "$_id" },
                     pipeline: [
-                      { $match: { $expr: { $and: [{ $eq: ["$user", "$$w_ww"] }, { $eq: ["$theme", '$$ww_w'] },] } } },
+                      { $match: { $expr: { $and: [{ $eq: ["$user", "$$w_ww"] }, { $eq: ["$theme", idtheme] },] } } },
                     ],
                     as: "tassk",
                   },
                 },
+                { $sort: { 'name': 1 } },
               ],
-              as: "Usser",
+              as: "integgers",
             },
           },
-          { $sort: { 'Usser.name': 1 } },
         ],
-        as: "integgers",
+        as: "curso",
+
       },
     },
     {
       $lookup: {
-
         from: "tasks",
         let: { w_1: "$_id", w_2: "$user" },
         pipeline: [
           { $match: { $expr: { $and: [{ $eq: ["$user", "$$w_2"] }, { $eq: ["$theme", '$$w_1'] },] } } },
         ],
         as: "tassks",
+      },
+    },
+    {
+      $lookup: {
+        from: "sections",
+        let: { w_1: "$unidad" },
+        pipeline: [
+          { $match: { $expr: { $eq: ["$_id", "$$w_1"] } } },
+        ],
+        as: "unity",
 
       },
     },
-  ]);
-  //console.log(Curses)
-  //const Curses = await Curse.find();
-  return res.json(Curses);
-};
+    {
+      $lookup: {
+        from: "users",
+        let: { w_1: "$user" },
+        pipeline: [
+          { $match: { $expr: { $eq: ["$_id", "$$w_1"] } } },
+        ],
+        as: "userr",
+      },
+    },
+  ]).collation({ locale: 'es' });
+console.log(Curses)
+  return res.json(Curses)
+}
 notesww.getSS = async (req, res) => {
   const note = await Note.find({
     chapter: req.params.chap,

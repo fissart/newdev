@@ -53,7 +53,7 @@ const Home = () => {
         <form onSubmit={login} style={{ position: 'absolute', top: '50%', left: '50%' }} className="center" >
           <input type="email" placeholder="Email" onChange={handleChange("email")} value={formData.email} required="required" />
           <input type="password" placeholder="Password" onChange={handleChange("password")} value={formData.password} required="required" />
-          <button type="submit">
+          <button type="submit" style={{background:"orange"}}>
             {"Ingresar"} {formData.namefile}
           </button>
         </form>

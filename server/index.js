@@ -8,8 +8,8 @@ const https = require("https");
 const port = process.env.PORT || 9997;
 const fileUpload = require('express-fileupload');
 const connectDB = require("./configs/db");
-const path = require('path');
-// const Note = require("./models/chat.model");
+const path = require('path')
+const Note = require("./models/chat.model");
 const morgan = require("morgan");
 // var xss = require("xss")
 
@@ -68,63 +68,110 @@ app.use(morgan("dev"));
 //Load routes
 //Use Routes
 
-app.use("/api/land", require("./routes/cursesourcew"))
-app.use("/api/categories", require("./routes/category.route"))
+// app.use("/api/land", require("./routes/cursesourcew"))
+// app.use("/api/categories", require("./routes/category.route"))
 app.use("/api/curses", require("./routes/curse.route"))
-app.use("/api/chapters", require("./routes/chapter.route"))
-app.use("/api/seccions", require("./routes/seccion.route"))
-app.use("/api/tasks", require("./routes/task.route"))
-app.use("/api/mycurses", require("./routes/mycurse.route"))
-app.use("/api/tests", require("./routes/test.route"))
+app.use("/api/sections", require("./routes/seccion.route"))
+// app.use("/api/chapters", require("./routes/chapter.route"))
+// app.use("/api/tasks", require("./routes/task.route"))
+// app.use("/api/mycurses", require("./routes/mycurse.route"))
+// app.use("/api/tests", require("./routes/test.route"))
 app.use("/api/links", require("./routes/link.route"))
-app.use("/api", require("./routes/chat.route"))
 app.use("/api/auth", require("./routes/auth.route"))
-app.use("/api", require("./routes/user.route"))
+app.use("/api/users", require("./routes/user.route"))
+app.use("/api", require("./routes/chat.route"))
 // app.use("/api/comments", require("./routes/comment.route"))
 
+let interval;
+let users = [];
+
 io.on("connection", (socket) => {
-  console.log("User www", socket.id);
-  socket.on("send_message", (data, data2, callback) => {
-    console.log("Message Received ", data, data2);
-    io.emit("receive_message", data);
+  console.log("Get", socket.id, socket.connected)
+  // var address = socket.handshake.address
+  // console.log(socket.request.connection.remoteAddress)
+
+
+  socket.on("send_message", async (data, data2, callback) => {
+    // console.log("Message Received ", data, data2);
+    await io.emit("receive_message", data, data2);
+
+    data2 = { ...data2, id: socket.id, ip: socket.request.connection.remoteAddress }
+    const newNote = new Note(data2);
+    const www = await newNote.save()
+    // console.log(www, "newNote")
     callback({
       status: "ok"
     })
   })
 
-  socket.on("disconnect", () => {
-    console.log("left connection")
-    // var diffTime = Math.abs(timeOnline[socket.id] - new Date());
-    // var key;
-    // for (const [k, v] of JSON.parse(
-    //   JSON.stringify(Object.entries(connections))
-    // )) {
-    //   for (let a = 0; a < v.length; ++a) {
-    //     if (v[a] === socket.id) {
-    //       key = k;
-
-    //       for (let a = 0; a < connections[key].length; ++a) {
-    //         io.to(connections[key][a]).emit("user-left", socket.id);
-    //       }
-
-    //       var index = connections[key].indexOf(socket.id);
-    //       connections[key].splice(index, 1);
-
-    //       console.log(key, socket.id, Math.ceil(diffTime / 1000));
-
-    //       if (connections[key].length === 0) {
-    //         delete connections[key];
-    //       }
-    //     }
-    //   }
-    // }
+  socket.on("usssers", async (user) => {
+    if (user.email && users.findIndex(obj => obj.id == socket.id) == -1) {
+      user = { ...user, id: socket.id, ip: socket.request.connection.remoteAddress }
+      socket.www = user
+      users.push(socket.www)
+      // console.log(user, "user")
+      // console.log(users, "ww1")
+    } else { }
+    io.emit("users", users)
+    const mensajes = await Note.aggregate([
+      { $sort: { _id: -1 } },
+      { $limit: 19 },
+      {
+        $lookup: {
+          from: "users",
+          let: { www: "$user" },
+          pipeline: [
+            { $match: { $expr: { $eq: ["$_id", "$$www"] } } }],
+          as: "usser",
+        },
+      },
+    ])
+    // console.log(mensajes,"messages")
+    socket.emit("load old msgs", mensajes);
+    // io.emit("receive_message", {}, mensajes)
   })
+
+  socket.on("disconnect", () => {
+    console.log("Left", socket.id, socket.connected)
+    if (!socket.www) return;
+    users.splice(users.indexOf(socket.www), 1)
+    io.emit("users", users)
+    // console.log(users, "w2")
+    clearInterval(interval)
+    // users.splice(users.findIndex(obj => obj.email==socket.www), 1)
+  });
+
+
+  // socket.on("disconnect", () => {
+  //   console.log("left connection")
+  //   var diffTime = Math.abs(timeOnline[socket.id] - new Date());
+  //   var key;
+  //   for (const [k, v] of JSON.parse(
+  //     JSON.stringify(Object.entries(connections))
+  //   )) {
+  //     for (let a = 0; a < v.length; ++a) {
+  //       if (v[a] === socket.id) {
+  //         key = k;
+  //         for (let a = 0; a < connections[key].length; ++a) {
+  //           io.to(connections[key][a]).emit("user-left", socket.id);
+  //         }
+
+  //         var index = connections[key].indexOf(socket.id);
+  //         connections[key].splice(index, 1);
+
+  //         console.log(key, socket.id, Math.ceil(diffTime / 1000));
+
+  //         if (connections[key].length === 0) {
+  //           delete connections[key];
+  //         }
+  //       }
+  //     }
+  //   }
+  // })
 
 })
 
 
-// let interval;
-// let users = [];
 
 // io.on("connection", async (socket) => {
 //   // socket.join("www");
@@ -374,9 +421,9 @@ io.on("connection", (socket) => {
 //   return xss(str);
 // };
 
-// connections = {};
-// messages = {};
-// timeOnline = {};
+connections = {};
+messages = {};
+timeOnline = {};
 
 // io.on("connection", (socket) => {
 //   socket.on("join-call", (path) => {

@@ -4,7 +4,7 @@ const router = Router();
 const {
   getUu,
   createU,
-  getU,
+  getSTDcurses,
   deleteU,
   updateU,
   getCURSOUser,
@@ -19,11 +19,13 @@ const {
 
 router.route("/").get(getUu).post(createU);
 
-router.route("/:id").get(getU).delete(deleteU).put(updateU);
+
+router.route("/:id").delete(deleteU).put(updateU);
 router.route("getCursesStd/:id").get(getCURSOstd);
 router.route("/cursosespecificos/:iduser/:true").get(getCURSOUser);
 router.route('/ControllerAll/:id/:idw')
-  .get(getCURSOThemes)
+.get(getCURSOThemes)
+router.route("/stdcurses/:id/:show").get(getSTDcurses)
 ///////////////////////////////////////////////////////////link
 
 

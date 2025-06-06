@@ -1,4 +1,5 @@
 /* This example requires Tailwind CSS v2.0+ */
+import Message from './message'
 import logo from '../logo.png';
 // import { Fragment } from 'react'
 // import { Popover, Transition } from '@headlessui/react'
@@ -364,31 +365,31 @@ export default function Example() {
 
                 <a className="text-dark" style={{ margin: ".1cm;" }} target="_blank"
                   href="https://api.whatsapp.com/send?phone=+51 966999215&text=Hola%20bienvenido">
-                  <ChatIcon style={{ width: ".9cm", color: "orange" }} />
+                  <ChatIcon style={{ width: ".9cm", color: "magenta" }} />
                 </a>
                 <a className="text-dark" style={{ margin: ".1cm;" }} target="_blank"
                   href="https://m.me/bellasartes.ayacucho">
-                  <PhoneIcon style={{ width: ".9cm", color: "orange" }} />
+                  <PhoneIcon style={{ width: ".9cm", color: "magenta" }} />
                 </a>
                 <a className="text-dark" style={{ margin: ".1cm;" }} target="_blank"
                   href="https://bellasartes.blogspot.com">
-                  <ShieldCheckIcon style={{ width: ".9cm", color: "orange" }} />
+                  <ShieldCheckIcon style={{ width: ".9cm", color: "magenta" }} />
                 </a>
                 <a className="text-dark" style={{ margin: ".1cm;" }} target="_blank"
                   href="https://web.facebook.com/bellasartes.ayacucho">
-                  <PlayIcon style={{ width: ".9cm", color: "orange" }} />
+                  <PlayIcon style={{ width: ".9cm", color: "magenta" }} />
                 </a>
                 <a className="text-dark" style={{ margin: ".1cm;" }} target="_blank"
                   href="https://instagram.com/bellasartes.ayacucho">
-                  <RefreshIcon style={{ width: ".9cm", color: "orange" }} />
+                  <RefreshIcon style={{ width: ".9cm", color: "magenta" }} />
                 </a>
                 <a className="text-dark" style={{ margin: ".1cm;" }} target="_blank"
                   href="https://www.tiktok.com/@bellasartes.ayacucho">
-                  <CursorClickIcon style={{ width: ".9cm", color: "orange" }} />
+                  <CursorClickIcon style={{ width: ".9cm", color: "magenta" }} />
                 </a>
                 <a className="text-dark" style={{ margin: ".1cm;" }} target="_blank"
                   href="https://www.youtube.com/channel/UCkYf1NyZ1kUl3965WgeL6rw">
-                  <BookmarkAltIcon style={{ width: ".9cm", color: "orange" }} />
+                  <BookmarkAltIcon style={{ width: ".9cm", color: "magenta" }} />
                 </a>
               </div>
             </div>
@@ -398,7 +399,7 @@ export default function Example() {
           textAlign: 'center', display: 'flex',
           justifyContent: 'center', alignItems: 'center'
         }} >
-          <img src={logo} className="App-logowww" alt="logo" />
+          <img src={'./logo.png'} className="App-logowww" alt="logo" />
         </header>
         <div className="">
           <h1 className="">
@@ -409,12 +410,19 @@ export default function Example() {
             Escuela Superior de Formación Artística pública de formación profesional en artes visuales desarrollado en un plan de estudios de 5 años ubicado en la ciudad de Ayacucho.
           </p>
           <div style={{ padding: '.1cm', textAlign: 'center', margin: 'auto', display: 'block' }}>
-            <div className="">
-              <buton><a
-                href="/nosotros" Target="_blank"
-                className="">
+            <div>
+              <button style={{background:"orange"}}
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault()
+                  window.location.href = '/nosotros'
+                }}
+              >
                 Saber más
-              </a></buton>
+              </button>
+              {/* <a href="/nosotros" Target="_blank" className="text-dark" style={{ margin: ".1cm", color: "magenta" }}>
+                <RefreshIcon style={{ width: ".9cm" }} />
+              </a> */}
             </div>
             {/* <div className="">
                 <a
@@ -442,13 +450,13 @@ export default function Example() {
             />
           </div>
         </div>
-        <iframe style={{ width: "100%", height: "12cm", frameborder: "0cm", scrolling: "no" }}
+        {/* <iframe style={{ width: "100%", height: "12cm", frameborder: "0cm", scrolling: "no" }}
           src="https://maps.google.com/maps?width=100%25&amp;height=500&amp;hl=es&amp;q=+(Escuela%20de%20Bellas%20Artes%20Felipe%20Guam%C3%A1n%20Poma%20de%20Ayala-Ayacucho)&amp;t=k&amp;z=18&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"><a
             href="https://www.gps.ie/car-satnav-gps/">Car GPS</a></iframe>
         <iframe style={{ width: "100%", height: "15cm", frameborder: "0cm", scrolling: "no" }}
           src="https://www.google.com/maps/embed?pb=!4v1655850799758!6m8!1m7!1sGm3v-xYcR1tj1gz95RrkYg!2m2!1d-13.15635415471263!2d-74.2180525291301!3f124.85298126566764!4f2.1996870284465047!5f0.7820865974627469"
           allowfullscreen="" loading="lazy"
-          referrerpolicy="no-referrer-when-downgrade"></iframe>
+          referrerpolicy="no-referrer-when-downgrade"></iframe> */}
 
       </div>
     </div>
