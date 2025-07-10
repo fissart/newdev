@@ -3,19 +3,20 @@ import './App.css';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./componentes/nabvar";
 import Home from "./componentes/inicio";
-import Blogs from "./componentes/dashboardwww";
-import Contact from "./componentes/conttacto";
+import Blogs from "./componentes/blog";
+import Contacto from "./componentes/conttacto";
 import NoPage from "./componentes/w5";
-import Www from "./componentes/w6"
-import Theme from "./componentes/w6 copy"
+import Curso from "./componentes/curso"
+import Theme from "./componentes/tema"
 import Editor from "./componentes/carreras"
 import Wwwww from "./componentes/wwcalculadora";
-import WwwwwW from "./componentes/message";
+import Chat from "./componentes/message";
 import Nosotros from "./componentes/nosotros";
 import Documentos from "./componentes/documentos";
-import Algoritmos from "./componentes/documentos copy";
-import Articulos from "./componentes/documentos copy 2";
-import Reports from "./componentes/documentos copy 3";
+import Algoritmos from "./componentes/algoritmos";
+import Img from "./componentes/dashboardwww copy";
+import Articulos from "./componentes/articulos";
+import Reports from "./componentes/reporttes";
 
 function App() {
   return (
@@ -23,19 +24,20 @@ function App() {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
-          <Route path="/curso/:id" element={<Www/>} />
-          <Route path="/tema/:id" element={<Theme/>} />
+          <Route path="/curso/:id" element={<Curso/>} />
+          <Route path="/tema/:id/:number/:numberr" element={<Theme/>} />
           <Route path="blog" element={<Blogs />} />
           <Route path="documento" element={<Documentos />} />
+          <Route path="img" element={<Img />} />
           <Route path="reports" element={<Reports />} />
           <Route path="articulos" element={<Articulos />} />
           <Route path="algoritmos" element={<Algoritmos />} />
-          <Route path="www" element={<Www />} />
+          <Route path="www" element={<Chat />} />
           <Route path="linea" element={<Editor />} />
           <Route path="wwwww" element={<Wwwww />} />
           <Route path="nosotros" element={<Nosotros />} />
-          <Route path="wwwwww" element={<WwwwwW />} />
-          <Route path="contacto" element={<Contact />} />
+          {/* <Route path="wwwwww" element={<WwwwwW />} /> */}
+          <Route path="contacto" element={<Contacto />} />
           <Route path="*" element={<NoPage />} />
         </Route>
       </Routes>

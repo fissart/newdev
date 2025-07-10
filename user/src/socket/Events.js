@@ -1,5 +1,7 @@
 import React from 'react';
+import Markdown from "../componentes/markdownwww";
 import { socket } from '../socket';
+import { ToastContainer, toast } from 'react-toastify'
 const { format, register } = require('timeago.js')
 
 register('es_ES', (number, index, total_sec) => [
@@ -25,11 +27,12 @@ const wwdelete = (item) => {
   if (response) {
     console.log(item)
 
-    // socket.emit('send_message', 'value', { email: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")).email : '1', name: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")).name : '1', message:'errased' }, (response) => {
-    //   // setIsLoading(false)
-    //   // console.log(response.status)
-    //   // console.log("value")
-    // })
+    socket.emit('send_messageremove', item, (response) => {
+      // setIsLoading(false)
+      console.log(response.status)
+      toast.warning(response.status)
+      // console.log("value")
+    })
 
     // return fetch(process.env.REACT_APP_URL + '/api/links/' + item, {
     //   method: 'delete'
@@ -43,11 +46,24 @@ export function Events({ events }) {
   console.log(events)
   return (
     <>
+      <ToastContainer
+        position="bottom-right" autoClose={1000} hideProgressBar={false} newestOnTop={false} closeOnClick={true} rtl={false} pauseOnFocusLoss={false} draggable pauseOnHover={false} closeButton={false}
+      />
       {
         events.length != 0 ? events.map((event, index) =>
-          <div key={index} style={{ backgroundColor: 'rgb(215,215,155)', padding: '.1cm', margin: '.1cm', textAlign: 'left' }}>
-            <div style={{ fontSize: '12px', padding: '.1cm' }}>{event.name} <span style={{ color: 'rgb(15,215,155)' }}>{timeago(event.create)}</span><button onClick={() => wwdelete(event._id)}>Errase</button></div>
-            <div style={{ padding: '.1cm' }}>{event.message}</div>
+          <div key={index} style={{ padding: '.1cm', marginBottom: '.1cm' }}>
+            <div key={index} style={{ display: 'flex' }}>
+              <button className="btn" onClick={() => wwdelete(event._id)}>-</button>
+              <div style={{ fontSize: '12px', padding: '8px 3px' }}>
+                {event.name}
+                <span style={{ color: 'rgb(15,95,15)' }}> {timeago(event.create)}</span>
+              </div>
+            </div>
+            <div>
+              <Markdown>{event.message ? event.message.replace(/(<oembed url="https:\/\/www.dailymotion.com\/video\/)(.*?)(".*?oembed>)/g, `<iframe width='100%' height='350' src="https://www.dzilymotion.com/embed/video/$2"></iframe>`).replace(/(<oembed url="https:\/\/www.youtube.com\/watch\?v=)(.*?)(".*?oembed>|&.*?oembed>)/g, `<iframe width='100%' height='350' src="https://www.youtube.com/embed/$2"></iframe>`).replace(/(<script type="math\/tex; mode=display">)(.*?)(<\/script>)/g, "\n$$$$\n$2\n$$$$\n").replace(/(<script type="math\/tex">)(.*?)(<\/script>)/g, "$$$2$$").replace(/(<p>)/g, " \n").replace(/(<\/p>)/g, " \n").replace(/(<h2>)/g, "# ").replace(/(<\/h2>)/g, "\n ").replace(/(<figure>)/g, " \n").replace(/(<\/figure>)/g, "\n").replace(/(<li>)/g, "\n 1. ").replace(/(<\/li>)/g, "").replace(/(<ol>)/g, "").replace(/(<\/ol>)/g, "\n").replace(/(<ul>)/g, "").replace(/(<\/ul>)/g, "\n").replace(/(<blockquote>)/g, "\n > ").replace(/(<\/blockquote>)/g, "\n\n ").replace(/<a href="(.*?)">(.*?)(<\/a>)/g, "[$2]($1)") : null}
+              </Markdown>
+
+            </div>
             {/* <span style={{  fontSize: '12px' }}>{event.email}</span> */}
           </div>
         )

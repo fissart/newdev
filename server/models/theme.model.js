@@ -2,19 +2,27 @@ const { Schema, model, ObjectId } = require("mongoose");
 
 const userSchema = new Schema(
   {
-    user: {
-      type: Schema.Types.ObjectId,
-    },
+    title: { type: String },
+    description: { type: String },
+    img: { type: String },
+    test: { type: String },
+    codecurse: { type: String },
+    task: { type: String },
+    time: { type: String },
+    timeex: { type: String },
+    conceptual: { type: String },
+    procedimental: { type: String },
+    actitudinal: { type: String },
     curse: {
       type: Schema.Types.ObjectId,
     },
-    title: { type: String },
-    theme: { type: String },
-    fechaforum: Date,
+    user: {
+      type: Schema.Types.ObjectId,
+    }
   },
   {
     timestamps: true,
   }
 );
 
-module.exports = model("Ttheme", userSchema);
+module.exports = model("Theme", userSchema);

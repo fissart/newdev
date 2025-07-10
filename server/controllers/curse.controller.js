@@ -5,6 +5,7 @@ const Curse = require("../models/curse.model");
 const User = require("../models/auth.model");
 const Cursesource = require("../models/cursesource.model");
 const Integer = require("../models/mycurse.model");
+const Encuesta = require("../models/encuesta");
 
 notesww.getUu = async (req, res) => {
   const notes = await Curse.find();
@@ -12,7 +13,7 @@ notesww.getUu = async (req, res) => {
 };
 
 notesww.createU = async (req, res) => {
-console.log(req.body)  // var cursor = db.cursesources.find();
+  console.log(req.body)  // var cursor = db.cursesources.find();
   const note = await Cursesource.find({
     ciclo: "3",
     mencion: "E",
@@ -67,13 +68,80 @@ console.log(req.body)  // var cursor = db.cursesources.find();
   // await newNote.save()
   res.json("New Note added");
 };
+notesww.createEncuesta = async (req, res) => {
+  var mongoose = require('mongoose')
+  console.log(req.body)  // var cursor = db.cursesources.find();
+  const year = new Date().getFullYear()
+  const { idstudent, idteacher, idcurso, codigo, ciclo, mencion, w1, w2, w3, w4, w5, w6, w7, w8, w9, w10, w11, w12, w13, w14, w15, w16, w17, w18, w19, w20 } = req.body
+  console.log(req.body)
+  const newCurse = { idstudent, idteacher, idcurso, year, codigo, ciclo, mencion, items: [w1, w2, w3, w4, w5, w6, w7, w8, w9, w10, w11, w12, w13, w14, w15, w16, w17, w18, w19, w20] };
+  const Cursew = new Encuesta.default(newCurse);
+  await Cursew.save()
+
+  return res.json({
+    msgok: "ok",
+  })
+  // try {
+  //     const wwwww = new Integer({
+  //       "ciclo": note[0].ciclo,
+  //       "mencion": note[0].mencion,
+  //       "codigo": note[0].codigo,
+  //       "title": note[0].title,
+  //       "teoria": note[0].teoria,
+  //       "practica": note[0].practica,
+  //       "credito": note[0].credito,
+  //       "requisito": note[0].requisito,
+  //       "user": req.body.user,
+  //       "curse": req.body.curse,
+  //       "userteacher": req.body.userteacher,
+  //       "year": new Date(),
+  //       "description": "www3www",
+  //       "date": new Date()
+  //     })
+  //     // console.log(wwwww)
+  //     await wwwww.save()
+  //   } catch (err) {
+  //     console.error(err)
+  //   }
+
+};
 
 notesww.getSTDcurses = async (req, res) => {
-  const note = await Integer.find({user:req.params.id});
-  console.log(note)
-
-  res.json(note);
-};
+  const { ObjectId } = require("mongodb");
+  const id = ObjectId(req.params.id)
+  const ciclo = req.params.ciclo
+  const mencion = req.params.mencion
+  const year = new Date().getFullYear()
+  const user = ObjectId(id)
+  console.log(ciclo, mencion, year)
+  const integers = await Curse.aggregate([
+    {
+      $match: { $expr: { $and: [{ $eq: ["$ciclo", ciclo] }, { $eq: ["$mencion", mencion] }, { $eq: ["$year", year + ""] }, { $eq: ["$show", "true"] }] } },
+    },
+    {
+      $lookup: {
+        from: "users",
+        let: { www: "$user" },
+        pipeline: [
+          { $match: { $expr: { $eq: ["$_id", "$$www"] } } },
+        ],
+        as: "userw",
+      },
+    },
+    {
+      $lookup: {
+        from: "encuestas",
+        let: { www: "$codigo" },
+        pipeline: [
+          { $match: { $expr: { $and: [{ $eq: ["$idstudent", user] }, { $eq: ["$ciclo", ciclo] }, { $eq: ["$mencion", mencion] }, { $eq: ["$codigo", "$$www"] }, { $eq: ["$year", year + ""] }] } } },
+        ],
+        as: "encuestas",
+      },
+    },
+  ])
+  // console.log(integers)
+  return res.json(integers)
+}
 
 notesww.getCURSOUser = async (req, res) => {
   // req.io.on("wwwww", async (www) => {

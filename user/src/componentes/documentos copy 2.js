@@ -8,29 +8,30 @@ import '@ckeditor/ckeditor5-build-classic/build/translations/es';
 import 'katex/dist/katex.min.css';
 import Markdown from "./markdownwww";
 import logo from '../logo.png';
+import { Textarea } from '@headlessui/react';
 // import './App.css';
 function App() {
-    const [www, setWww] = useState()
-    const [id, setId] = useState()
-    const [edit, setEdit] = useState()
-    // setFormData({ ...formData, rol:"3", name:"www", email:"www", foto:"www", password:"www" })
-    useEffect(() => {
-      get()
-    }, []);
+  const [www, setWww] = useState()
+  const [id, setId] = useState()
+  const [edit, setEdit] = useState()
+  // setFormData({ ...formData, rol:"3", name:"www", email:"www", foto:"www", password:"www" })
+  useEffect(() => {
+    get()
+  }, []);
 
 
-    const get = () => {
-      fetch(process.env.REACT_APP_URL + "/api/links/editor/ARTICULO")
-        .then((response) => response.json())
-        .then((www) => {
-          setWww(www.reverse()); // ⬅️ Guardar datos
-          console.log(www)
-        })
-        .then(response => response.json())
-        // .then(data => { toast.warning(data); get() })
-        .catch(error => console.error(error));
+  const get = () => {
+    fetch(process.env.REACT_APP_URL + "/api/links/editor/ARTICULO")
+      .then((response) => response.json())
+      .then((www) => {
+        setWww(www.reverse()); // ⬅️ Guardar datos
+        console.log(www)
+      })
+      .then(response => response.json())
+      // .then(data => { toast.warning(data); get() })
+      .catch(error => console.error(error));
 
-    }
+  }
 
   const wwwww = () => {
     fetch(process.env.REACT_APP_URL + '/api/links', {
@@ -77,13 +78,13 @@ function App() {
       .then(data => { toast.info(data); get() })
       .catch(error => console.error(error));
 
-  } 
+  }
 
   const listItems = www ? www.map((number) =>
     <div key={number._id}>
       {number._id !== id ?
         <div className="card" key={number._id}>
-          {localStorage.getItem("user")&&JSON.parse(localStorage.getItem("user")).rol=='1' ? <><button onClick={() => wwdelete(number._id)}>Errase</button>
+          {localStorage.getItem("user") && JSON.parse(localStorage.getItem("user")).rol == '1' ? <><button onClick={() => wwdelete(number._id)}>Errase</button>
             <button onClick={() => { setId(number._id); setEdit(number.description) }}>Editar</button></> : null}
           <Markdown>{number.description.replace(/(<oembed url="https:\/\/www.dailymotion.com\/video\/)(.*?)(".*?oembed>)/g, `<iframe width='100%' height='350' src="https://www.dailymotion.com/embed/video/$2"></iframe>`).replace(/(<oembed url="https:\/\/www.youtube.com\/watch\?v=)(.*?)(".*?oembed>|&.*?oembed>)/g, `<iframe width='100%' height='350' src="https://www.youtube.com/embed/$2"></iframe>`).replace(/(<script type="math\/tex; mode=display">)(.*?)(<\/script>)/g, "\n$$$$\n$2\n$$$$\n").replace(/(<script type="math\/tex">)(.*?)(<\/script>)/g, "$$$2$$").replace(/(<p>)/g, "").replace(/(<\/p>)/g, "").replace(/(<h2>)/g, "").replace(/(<\/h2>)/g, "").replace(/(<li>)/g, "\n 1. ").replace(/(<\/li>)/g, "").replace(/(<ol>)/g, "").replace(/(<\/ol>)/g, "").replace(/(<blockquote>)/g, "\n > ").replace(/(<\/blockquote>)/g, "\n\n ").replace(/<a href="(.*?)">(.*?)(<\/a>)/g, "[$2]($1)")}
           </Markdown>
@@ -112,8 +113,9 @@ function App() {
 
   return (
     <div className="contenedor">
+      {/* <input onChange={e => setValue(e.target.value)} required onPointerDown={e => localStorage.getItem("user") ? null : navigate('/contacto')} /> */}
       <div style={{ margin: 'auto', display: 'block', textAlign: 'right' }}>
-        {localStorage.getItem("user")&&JSON.parse(localStorage.getItem("user")).rol=='1' ? <button onClick={() => wwwww()}>Crear</button> : <></>}
+        {localStorage.getItem("user") && JSON.parse(localStorage.getItem("user")).rol == '1' ? <button onClick={() => wwwww()}>Crear</button> : <></>}
       </div>
       <div>{listItems}</div>
       <ToastContainer

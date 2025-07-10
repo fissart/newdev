@@ -9,6 +9,7 @@
 import { useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
+
 const Home = () => {
   const [formData, setFormData] = useState({
     email: "",
@@ -21,14 +22,15 @@ const Home = () => {
   const navigate = useNavigate()
   const login = async (e) => {
     e.preventDefault()
+    
     console.log(formData.email, formData.password)
     fetch(process.env.REACT_APP_URL + `/api/auth/login/${formData.email}/${formData.password}`)
-      .then((response) => response.json())
-      .then((www) => {
-        console.log(www)
-        if (www._id) {
-          localStorage.setItem('user', JSON.stringify(www))
-          navigate('/')        //  history.push("/")
+    .then((response) => response.json())
+    .then((www) => {
+      console.log(www)
+      if (www._id) {
+        localStorage.setItem('user', JSON.stringify(www))
+        navigate('/')        //  history.push("/")
           //  history.push("/carpeta")
         } else { toast.warning(www.msg) }
       })
@@ -50,12 +52,12 @@ const Home = () => {
         <Wwwww />
       </div> */}
       <div style={{ height: '85vh', width: '100%', textAlign: 'center', margin: 'auto', display: 'block' }}>
-        <form onSubmit={login} style={{ position: 'absolute', top: '50%', left: '50%' }} className="center" >
-          <input type="email" placeholder="Email" onChange={handleChange("email")} value={formData.email} required />
-          <input type="password" placeholder="Password" onChange={handleChange("password")} value={formData.password} required />
-          <button type="submit">
+        <form onSubmit={login} style={{ position: 'absolute', top: '50%', left: '50%', padding: '.2cm', flexWrap: 'wrap', display: 'flex'  }} className="center" >
+          <div className="form1"><input style={{fontSize: 'inherit', width: '100%', padding: '.2cm', boxSizing: 'border-box'  }}  type="email" placeholder="primernombreprimerapellido@esfapa.edu.pe" onChange={handleChange("email")} value={formData.email} required /></div>
+          <div className="form1"><input style={{fontSize: 'inherit', width: '100%', padding: '.2cm', boxSizing: 'border-box'  }} type="password" placeholder="dni (Primera vez)" onChange={handleChange("password")} value={formData.password} required /></div>
+          <div style={{width: '100%', margin: '0.24px', padding: '6px'}}><button type="submit"  className="btn-info" style={{width: '100%', padding: '11px', borderRadius: '3px'}}>
             {"Ingresar"} {formData.namefile}
-          </button>
+          </button></div>
         </form>
 
       </div>

@@ -62,12 +62,47 @@ const NoPage = () => {
       .then(response => response.json())
       .then(data => { toast.warning(data); get() })
   }
+  const update = (event, id) => {
+    fetch(`${process.env.REACT_APP_URL}/api/sections/theme/${id}`, {
+      method: 'put',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        title: event.trim(),
+        name: '63ab4f45a06c6fe92e7a4209'
+      })
+    })
+      .then(response => response.json())
+      .then(data => { toast.info(data); get() })
+      .catch(error => console.error(error));
+    console.log("www")
+
+  }
+
+  const updateSection = (event, id) => {
+    fetch(`${process.env.REACT_APP_URL}/api/sections/section/${id}`, {
+      method: 'put',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        title: event.trim(),
+        name: '63ab4f45a06c6fe92e7a4209'
+      })
+    })
+      .then(response => response.json())
+      .then(data => { toast.info(data); get() })
+      .catch(error => console.error(error));
+    console.log("www")
+
+  }
 
 
 
   return <div className="contenedor">
     <ToastContainer
-      position="top-right" autoClose={1000} hideProgressBar={false} newestOnTop={false} closeOnClick={true} rtl={false} pauseOnFocusLoss={false} draggable pauseOnHover={false} closeButton={false}
+      position="bottom-right" autoClose={1000} hideProgressBar={false} newestOnTop={false} closeOnClick={true} rtl={false} pauseOnFocusLoss={false} draggable pauseOnHover={false} closeButton={false}
     />
     <button className="button" onClick={handleGeneratePdf}>
       Generate PDF {id}
@@ -86,23 +121,23 @@ const NoPage = () => {
           </Link></button>
         </div> : null}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap' }}>
-          {wwwww.unidades.map((unt) =>
+          {wwwww.unidades.map((unt,i) =>
             <div style={{ backgroundColor: 'blue', padding: '.1cm', margin: '.2cm', width: '16cm' }} key={unt._id}>
-              <div style={{ backgroundColor: 'white', fontSize: '15px', padding: '.1cm', textAlign: 'center' }}>{unt.title}</div>
+              <div style={{ backgroundColor: 'white', fontSize: '15px', padding: '.1cm', textAlign: 'center' }} onBlur={(e) => updateSection(e.target.textContent, unt._id)} contenteditable="true">{unt.title}</div>
               <div style={{ backgroundColor: 'white', fontSize: '13px', padding: '.1cm', textAlign: 'center' }}>{unt.actitudinal} {unt.procedimental} {unt.conceptual}</div>
               <div style={{ backgroundColor: 'white', fontSize: '13px', padding: '.1cm', textAlign: 'center' }}>{unt.codigo}</div>
               {localStorage.getItem("user") && JSON.parse(localStorage.getItem("user")).rol == '2' ?
                 <div style={{ alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', display: 'flex' }}>
                   <button onClick={() => wwdelete(unt._id)}>errase</button>
                   {/* <button onClick={() => update(unt._id)}>update</button>  */}
-                  <button><Link style={{ color: 'black' }} to={'/curso/' + unt._id} onClick={() => localStorage.setItem('curse', unt._id)} >
-                    Ir al curso
+                  <button><Link style={{ color: 'black' }} to={'/curso/' + unt._id + '/' + unt._id} onClick={() => localStorage.setItem('curse', unt._id)} >
+                    Ir al curso {i}
                   </Link></button>
                 </div> : null}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap' }}>
-                {unt.temas.map((tms) =>
+                {unt.temas.map((tms,j) =>
                   <div style={{ backgroundColor: 'cyan', padding: '.1cm', margin: '.2cm', width: '7cm' }} key={tms._id}>
-                    <div style={{ backgroundColor: 'white', fontSize: '15px', padding: '.1cm', textAlign: 'center' }}>{tms.title}</div>
+                    <div style={{ backgroundColor: 'white', fontSize: '15px', padding: '.1cm', textAlign: 'center' }} onBlur={(e) => update(e.target.innerText, tms._id)} contenteditable="true">{tms.title}</div>
                     <div style={{ backgroundColor: 'white', fontSize: '13px', padding: '.1cm', textAlign: 'center' }}>{tms.task}</div>
                     <div style={{ backgroundColor: 'white', fontSize: '13px', padding: '.1cm', textAlign: 'center' }}>{tms._id}</div>
                     <div style={{ backgroundColor: 'white', fontSize: '13px', padding: '.1cm', textAlign: 'center' }}>{tms.ciclo} {tms.credito} {tms.year} {tms.mencion}</div>
@@ -111,8 +146,8 @@ const NoPage = () => {
                       <div style={{ alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', display: 'flex' }}>
                         <button onClick={() => wwdelete(tms._id)}>errase</button>
                         {/* <button onClick={() => update(tms._id)}>update</button>  */}
-                        <button><Link style={{ color: 'black' }} to={`/tema/${tms._id}`} onClick={() => localStorage.setItem('curse', tms._id)} >
-                          Ir a la sesion
+                        <button><Link style={{ color: 'black' }} to={`/tema/${tms._id}/${i+1}/${j+1}`} onClick={() => localStorage.setItem('curse', tms._id)} >
+                          Ir a la sesion {j+1} {i+1}
                         </Link></button>
                       </div> : null}
                   </div>
@@ -127,6 +162,30 @@ const NoPage = () => {
         <img src={logo} className="App-logo" alt="logo" />
       </header>
     }
+    <div onChange={(e) => console.log(e.target.innerHTML)}>
+      wwwww
+      <textarea></textarea>
+      <div>
+        <input type="checkbox" id="scales" name="scales"/>
+        <label for="scales">Scales</label>
+      </div>
+      <div>
+        <input type="checkbox" id="horns" name="horns" />
+        <label for="horns">Horns</label>
+      </div>
+      <div>
+        <input type="checkbox" id="horns" name="horns" />
+        <label for="horns">Horns</label>
+      </div>
+      <div>
+        <input type="checkbox" id="horns" name="horns" />
+        <label for="horns">Horns</label>
+      </div>
+      <div>
+        <input type="checkbox" id="horns" name="horns" />
+        <label for="horns">Horns</label>
+      </div>
+    </div>
     {/* <img src={logo} width="100%" height="" />
     <img src={'../esfap.png'} width="100%" height="" /> */}
   </div >

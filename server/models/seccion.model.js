@@ -25,4 +25,4 @@ const userSchema = new Schema(
   }
 );
 
-module.exports = model("Themes", userSchema);
+module.exports = model("Section", userSchema);

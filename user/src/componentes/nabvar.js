@@ -11,8 +11,8 @@ import "./Navbar.css"
 
 const solutions = [
   {
-    name: 'Árticulos',
-    description: 'Articulos asociados a las novedades del arte',
+    name: 'Artículos',
+    description: 'Artículos asociados a las novedades del arte',
     href: '/articulos',
     icon: IconOne,
   },
@@ -44,7 +44,7 @@ export default function Example() {
       <nav>
         <Link to="/" className="title" onClick={() => setMenuOpen(menuOpen ? !menuOpen : false)}>
           {/* <img src={logo} className="App-logowww" alt="logo" /> */}
-          ESFAP-Ayacucho
+          ESFAPA
         </Link>
         <Link className="menu" onClick={() => setMenuOpen(!menuOpen)}>
           <img src={logo} className="App-logonew" alt="logo" />
@@ -54,16 +54,6 @@ export default function Example() {
           {/* <li>
             <Link to="/" onClick={() => setMenuOpen(!menuOpen)}>Home</Link>
           </li> */}
-          <li>
-            <Link to="/nosotros" onClick={() => setMenuOpen(!menuOpen)}>Nosotros</Link>
-          </li>
-          <li>
-            <Link to="/linea" onClick={() => setMenuOpen(!menuOpen)}>Carreras</Link>
-          </li>
-
-          <li>
-            <Link to="/documento" onClick={() => setMenuOpen(!menuOpen)}>Documentos</Link>
-          </li>
           <li>
             <Popover className="relative">
               {({ open }) => (
@@ -93,16 +83,13 @@ export default function Example() {
                       <div>
                         {solutions.map((item) => (
                           <Link to={item.href} onClick={() => open}>
-                            <Popover.Button  style={{ textAlign: 'center', width: '100%', padding: '.1cm', border: 'none', color: 'white', backgroundColor: 'rgba(98, 98, 98, .1)', fontSize: "inherit", fontWeight: "inherit", cursor: "pointer", fontFamily: "inherit" }}>
+                            <Popover.Button style={{ textAlign: 'center', width: '100%', padding: '.1cm', border: 'none', color: 'white', backgroundColor: 'rgba(98, 98, 98, .1)', fontSize: "inherit", fontWeight: "inherit", cursor: "pointer", fontFamily: "inherit" }}>
                               <item.icon aria-hidden="true" />
-                            <div className="">
-                              <p className="">
-                                {item.name}
-                              </p>
-                              <p className="">
+                              <div className="">
+                                <span >{item.name}</span>
+                                <br />
                                 {item.description}
-                              </p>
-                            </div>
+                              </div>
                             </Popover.Button>
                           </Link>
                         ))}
@@ -123,6 +110,17 @@ export default function Example() {
             </Popover>
           </li>
 
+
+          <li>
+            <Link to="/nosotros" onClick={() => setMenuOpen(!menuOpen)}>Nosotros</Link>
+          </li>
+          <li>
+            <Link to="/linea" onClick={() => setMenuOpen(!menuOpen)}>Carreras</Link>
+          </li>
+
+          <li>
+            <Link to="/documento" onClick={() => setMenuOpen(!menuOpen)}>Documentos</Link>
+          </li>
           {
             localStorage.getItem('user') ?
               <>
@@ -130,12 +128,12 @@ export default function Example() {
                   <Link to="/blog" onClick={() => setMenuOpen(!menuOpen)}>Dashboard</Link>
                 </li>
                 <li>
-                  <a onClick={() => { cerrar(); setMenuOpen(!menuOpen) }}>cerrar</a>
+                  <a onClick={() => { cerrar(); setMenuOpen(!menuOpen) }}>Cerrar</a>
                 </li>
               </>
               :
               <li>
-                <Link to="/contacto" onClick={() => setMenuOpen(!menuOpen)}>Login</Link>
+                <Link to="/contacto" onClick={() => setMenuOpen(!menuOpen)}>Entrar</Link>
               </li>
           }
         </ul>

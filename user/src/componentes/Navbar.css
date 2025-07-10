@@ -3,15 +3,16 @@
     margin: 0%;
     pointer-events: none;
     display: flex;
-  }
+}
+
 .App-logonew {
     height: 1cm;
     margin: 0%;
     pointer-events: none;
     display: flex;
-  }
+}
 
-  
+
 .active {
     background-color: #1d4ed8;
 }
@@ -24,7 +25,7 @@ nav {
     color: rgb(233, 222, 222);
     position: sticky;
     top: 0;
-    z-index: 9999999;
+    z-index: 111;
 }
 
 nav .title {
@@ -110,7 +111,7 @@ nav .menu span {
     }
 
     nav .title {
-        color: rgb(153, 15, 15);
+        color: rgb(77, 6, 6);
     }
 
 }

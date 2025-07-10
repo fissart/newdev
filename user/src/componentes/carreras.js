@@ -7,7 +7,7 @@ import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import '@ckeditor/ckeditor5-build-classic/build/translations/es';
 import 'katex/dist/katex.min.css';
-import Markdown from "./markdownwww";
+import Markdown from "./markdownwww.js";
 import logo from '../logo.png';
 // import logo from '../logo.svg';
 import { useRoute } from 'wouter'
@@ -45,7 +45,7 @@ function App() {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        detail: '<p>subtitlewww</p><figure class="media"><oembed url="https://www.youtube.com/watch?v=oKbCaj1J6EI"></oembed></figure><script type="math/tex; mode=display">www\\int_1^3f(z)dz=\\sum_1^2f(z)\\Delta</script>',
+        description: '<p>subtitlewww</p><figure class="media"><oembed url="https://www.youtube.com/watch?v=oKbCaj1J6EI"></oembed></figure><script type="math/tex; mode=display">www\\int_1^3f(z)dz=\\sum_1^2f(z)\\Delta</script>',
         curse: '63ab4f45a06c6fe92e7a4209',
         user: '63ab4f45a06c6fe92e7a4209',
         name: 'www',
@@ -88,10 +88,11 @@ function App() {
   const listItems = www ? www.map((number) =>
     <div key={number._id}>
       {number._id !== id ?
-        <div style={{ backgroundColor: 'rgb(225,225,228)' }} className="card" key={number._id}>
+        <div className="card" key={number._id}>
           {localStorage.getItem("user") && JSON.parse(localStorage.getItem("user")).rol == '1' ? <><button onClick={() => wwdelete(number._id)}>Errase</button>
             <button onClick={() => { setId(number._id); setEdit(number.description) }}>Editar</button></> : null}
-          <Markdown>{number.description.replace(/(<oembed url="https:\/\/www.dailymotion.com\/video\/)(.*?)(".*?oembed>)/g, `<iframe width='100%' height='350' src="https://www.dailymotion.com/embed/video/$2"></iframe>`).replace(/(<oembed url="https:\/\/www.youtube.com\/watch\?v=)(.*?)(".*?oembed>|&.*?oembed>)/g, `<iframe width='100%' height='350' src="https://www.youtube.com/embed/$2"></iframe>`).replace(/(<script type="math\/tex; mode=display">)(.*?)(<\/script>)/g, "\n\n$$$$\n\n$2\n\n$$$$\n\n").replace(/(<p><script type="math\/tex">)(.*?)(<\/script><\/p>)/g, "$$$2$$").replace(/(<blockquote>)/g, "\n > ").replace(/(<\/blockquote>)/g, "\n\n ").replace(/<a href="(.*?)">(.*?)(<\/a>)/g, "[$2]($1)")}
+          <h1>{number.title}</h1>
+          <Markdown>{number.description.replace(/(<oembed url="https:\/\/www.dailymotion.com\/video\/)(.*?)(".*?oembed>)/g, `<iframe width='100%' height='350' src="https://www.dzilymotion.com/embed/video/$2"></iframe>`).replace(/(<oembed url="https:\/\/www.youtube.com\/watch\?v=)(.*?)(".*?oembed>|&.*?oembed>)/g, `<iframe width='100%' height='350' src="https://www.youtube.com/embed/$2"></iframe>`).replace(/(<script type="math\/tex; mode=display">)(.*?)(<\/script>)/g, "\n$$$$\n$2\n$$$$\n").replace(/(<script type="math\/tex">)(.*?)(<\/script>)/g, "$$$2$$").replace(/(<p>)/g, " \n").replace(/(<\/p>)/g, " \n").replace(/(<h2>)/g, "# ").replace(/(<\/h2>)/g, "\n ").replace(/(<figure>)/g, " \n").replace(/(<\/figure>)/g, "\n").replace(/(<li>)/g, "\n 1. ").replace(/(<\/li>)/g, "").replace(/(<ol>)/g, "").replace(/(<\/ol>)/g, "\n").replace(/(<ul>)/g, "").replace(/(<\/ul>)/g, "\n").replace(/(<blockquote>)/g, "\n > ").replace(/(<\/blockquote>)/g, "\n\n ").replace(/<a href="(.*?)">(.*?)(<\/a>)/g, "[$2]($1)")}
           </Markdown>
           {/* <Link style={{ color: 'black' }} to={'/curso/' + number._id} onClick={() => localStorage.setItem('curse', number._id)} >
             Ir al curso

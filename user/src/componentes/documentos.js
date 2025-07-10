@@ -23,7 +23,7 @@ function App() {
       fetch(process.env.REACT_APP_URL + "/api/links/editor/DOCUMENTOS")
         .then((response) => response.json())
         .then((www) => {
-          setWww(www.reverse()); // ⬅️ Guardar datos
+          setWww(www) // .reverse()
           console.log(www)
         })
         .then(response => response.json())
@@ -39,7 +39,7 @@ function App() {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        detail: '<p>subtitlewww</p><figure class="media"><oembed url="https://www.youtube.com/watch?v=oKbCaj1J6EI"></oembed></figure><script type="math/tex; mode=display">www\\int_1^3f(z)dz=\\sum_1^2f(z)\\Delta</script>',
+        description: '<p>subtitlewww</p><figure class="media"><oembed url="https://www.youtube.com/watch?v=oKbCaj1J6EI"></oembed></figure><script type="math/tex; mode=display">www\\int_1^3f(z)dz=\\sum_1^2f(z)\\Delta</script>',
         curse: '63ab4f45a06c6fe92e7a4209',
         user: '63ab4f45a06c6fe92e7a4209',
         name: 'www',
@@ -85,7 +85,8 @@ function App() {
         <div className="card" key={number._id}>
           {localStorage.getItem("user")&&JSON.parse(localStorage.getItem("user")).rol=='1' ? <><button onClick={() => wwdelete(number._id)}>Errase</button>
             <button onClick={() => { setId(number._id); setEdit(number.description) }}>Editar</button></> : null}
-          <Markdown>{number.description.replace(/(<oembed url="https:\/\/www.dailymotion.com\/video\/)(.*?)(".*?oembed>)/g, `<iframe width='100%' height='350' src="https://www.dailymotion.com/embed/video/$2"></iframe>`).replace(/(<oembed url="https:\/\/www.youtube.com\/watch\?v=)(.*?)(".*?oembed>|&.*?oembed>)/g, `<iframe width='100%' height='350' src="https://www.youtube.com/embed/$2"></iframe>`).replace(/(<script type="math\/tex; mode=display">)(.*?)(<\/script>)/g, "\n$$$$\n$2\n$$$$\n").replace(/(<script type="math\/tex">)(.*?)(<\/script>)/g, "$$$2$$").replace(/(<p>)/g, "").replace(/(<\/p>)/g, "").replace(/(<h2>)/g, "").replace(/(<\/h2>)/g, "").replace(/(<li>)/g, "\n 1. ").replace(/(<\/li>)/g, "").replace(/(<ol>)/g, "").replace(/(<\/ol>)/g, "").replace(/(<blockquote>)/g, "\n > ").replace(/(<\/blockquote>)/g, "\n\n ").replace(/<a href="(.*?)">(.*?)(<\/a>)/g, "[$2]($1)")}
+            <h1>{number.title}</h1>
+          <Markdown>{number.description.replace(/(<oembed url="https:\/\/www.dailymotion.com\/video\/)(.*?)(".*?oembed>)/g, `<iframe width='100%' height='350' src="https://www.dzilymotion.com/embed/video/$2"></iframe>`).replace(/(<oembed url="https:\/\/www.youtube.com\/watch\?v=)(.*?)(".*?oembed>|&.*?oembed>)/g, `<iframe width='100%' height='350' src="https://www.youtube.com/embed/$2"></iframe>`).replace(/(<script type="math\/tex; mode=display">)(.*?)(<\/script>)/g, "\n$$$$\n$2\n$$$$\n").replace(/(<script type="math\/tex">)(.*?)(<\/script>)/g, "$$$2$$").replace(/(<p>)/g, " \n").replace(/(<\/p>)/g, " \n").replace(/(<h2>)/g, "# ").replace(/(<\/h2>)/g, "\n ").replace(/(<figure>)/g, " \n").replace(/(<\/figure>)/g, "\n").replace(/(<li>)/g, "\n 1. ").replace(/(<\/li>)/g, "").replace(/(<ol>)/g, "").replace(/(<\/ol>)/g, "\n").replace(/(<ul>)/g, "").replace(/(<\/ul>)/g, "\n").replace(/(<blockquote>)/g, "\n > ").replace(/(<\/blockquote>)/g, "\n\n ").replace(/<a href="(.*?)">(.*?)(<\/a>)/g, "[$2]($1)")}
           </Markdown>
           {/* <img src={process.env.REACT_APP_URL + '/link/' + number.file} height="50px" /> */}
           {/* <Link style={{ color: 'black' }} to={'/curso/' + number._id} onClick={() => localStorage.setItem('curse', number._id)} >
@@ -95,13 +96,13 @@ function App() {
         </div> :
         <div style={{ backgroundColor: 'orange' }} className="card" key={number._id}>
           <button onClick={() => { update(number._id); setId() }}>Actualizar</button>
-          <CKEditor
-            editor={ClassicEditor}
-            data={number.description}
-            config={{ language: 'es', }}
-            onChange={(event, editor) => { setEdit(editor.getData()) }}
-            onReady={editor => { console.log('Editor is ready to use!', editor) }}
-          />
+            <CKEditor
+              editor={ClassicEditor}
+              data={number.description}
+              config={{ language: 'es', }}
+              onChange={(event, editor) => { setEdit(editor.getData()) }}
+              onReady={editor => { console.log('Editor is ready to use!', editor) }}
+            />
         </div>
       }
     </div>
@@ -116,9 +117,7 @@ function App() {
         {localStorage.getItem("user")&&JSON.parse(localStorage.getItem("user")).rol=='1' ? <button onClick={() => wwwww()}>Crear</button> : <></>}
       </div>
       <div>{listItems}</div>
-      <ToastContainer
-        position="bottom-right" autoClose={1000} hideProgressBar={false} newestOnTop={false} closeOnClick={true} rtl={false} pauseOnFocusLoss={false} draggable pauseOnHover={false} closeButton={false}
-      />
+      
       {/* <img src={logo} className="App-logo" alt="logo" /> */}
 
     </div>

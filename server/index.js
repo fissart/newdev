@@ -13,13 +13,11 @@ const Note = require("./models/chat.model");
 const morgan = require("morgan");
 // var xss = require("xss")
 
-
 require("dotenv").config({
   path: "./configs/config.env",
 })
 const app = express();
-// const server = http.createServer(app);
-
+// const server = http.createServer(app)
 // var server = https.createServer(
 var server = https.createServer(
     {
@@ -29,8 +27,7 @@ var server = https.createServer(
      rejectUnauthorized: false
     },
   //   ca: fs.readFileSync('./test_ca.crt'),
-  app);
-
+  app)
 // var io = require('socket.io').listen(server);
 const io = socketIo(server, {
   cors: { origin: "*" }
@@ -52,8 +49,7 @@ app.use(bodyParser.json());
 app.use(cors()); // it enables all cors requests
 app.use(fileUpload());
 // static files
-app.use(express.static(path.join(__dirname, 'files')));
-
+app.use(express.static(path.join(__dirname, 'uploads')))
 
 // if (process.env.NODE_ENV === "development") {
 //     app.use(
@@ -62,6 +58,7 @@ app.use(express.static(path.join(__dirname, 'files')));
 //       })
 //     );
 // }
+
 app.use(morgan("dev"));
 
 
@@ -79,7 +76,7 @@ app.use("/api/sections", require("./routes/seccion.route"))
 app.use("/api/links", require("./routes/link.route"))
 app.use("/api/auth", require("./routes/auth.route"))
 app.use("/api/users", require("./routes/user.route"))
-app.use("/api", require("./routes/chat.route"))
+app.use("/api/chats", require("./routes/chat.route"))
 // app.use("/api/comments", require("./routes/comment.route"))
 
 let interval;
@@ -104,17 +101,30 @@ io.on("connection", (socket) => {
     })
   })
 
+  socket.on("send_messageremove", async (data, callback) => {
+    console.log("Messageremove Received ", data);
+    // await io.emit("receive_message", data);
+
+    // data2 = { ...data2, id: socket.id, ip: socket.request.connection.remoteAddress }
+    await Note.findByIdAndDelete(data)
+    // console.log(www, "newNote")
+    callback({
+      status: `Ok removido ${data}`
+    })
+  })
+
+
   socket.on("usssers", async (user) => {
     if (user.email && users.findIndex(obj => obj.id == socket.id) == -1) {
       user = { ...user, id: socket.id, ip: socket.request.connection.remoteAddress }
       socket.www = user
       users.push(socket.www)
-      // console.log(user, "user")
+      console.log(user, "user")
       // console.log(users, "ww1")
     } else { }
     io.emit("users", users)
     const mensajes = await Note.aggregate([
-      { $sort: { _id: -1 } },
+      // { $sort: { _id: -1 } },
       { $limit: 19 },
       {
         $lookup: {

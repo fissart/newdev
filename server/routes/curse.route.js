@@ -25,7 +25,7 @@ router.route("getCursesStd/:id").get(getCURSOstd);
 router.route("/cursosespecificos/:iduser/:true").get(getCURSOUser);
 router.route('/ControllerAll/:id/:idw')
 .get(getCURSOThemes)
-router.route("/stdcurses/:id/:show").get(getSTDcurses)
+router.route("/stdcurses/:id/:mencion/:ciclo").get(getSTDcurses)
 ///////////////////////////////////////////////////////////link
 
 

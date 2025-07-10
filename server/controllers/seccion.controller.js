@@ -19,7 +19,8 @@ const upload = multer({ storage: storage }).single('file')
 
 
 
-const Note = require("../models/seccion.model");
+const Section = require("../models/seccion.model");
+const Note = require("../models/theme.model");
 
 notesww.file = async (req, res) => {
   const file = req.files.filesww.name;
@@ -83,8 +84,8 @@ notesww.createS = async (req, res) => {
 notesww.getSs = async (req, res) => {
   const { ObjectId } = require("mongodb");
   const idtheme = ObjectId(req.params.id);
-  const curssse = ObjectId(req.params.curssse);
-console.log(idtheme)
+  // const curssse = ObjectId(req.params.curssse);
+  console.log(idtheme)
 
   const Curses = await Note.aggregate([
     {
@@ -156,7 +157,7 @@ console.log(idtheme)
       },
     },
   ]).collation({ locale: 'es' });
-console.log(Curses)
+  // console.log(Curses)
   return res.json(Curses)
 }
 notesww.getSS = async (req, res) => {
@@ -171,10 +172,18 @@ notesww.deleteS = async (req, res) => {
 };
 
 notesww.updateS = async (req, res) => {
+  // console.log(req.body);
   //  const { title, content, duration, date, author } = req.body;
-  const { title, description, dateb, datee } = req.body;
-  await Note.findByIdAndUpdate(req.params.id, { title, description, dateb, datee });
-  res.json("Note Updated");
+  const { title } = req.body;
+  await Note.findByIdAndUpdate(req.params.id, { title });
+  res.json("Theme Updated");
+};
+notesww.updateSs = async (req, res) => {
+  // console.log(req.body,req.params.id);
+  //  const { title, content, duration, date, author } = req.body;
+  const { title } = req.body;
+  await Section.findByIdAndUpdate(req.params.id, { title });
+  res.json("Unity Updated");
 };
 
 notesww.updateSfromStudent = async (req, res) => {

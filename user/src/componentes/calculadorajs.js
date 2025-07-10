@@ -2,6 +2,7 @@
 // import React from 'react';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
+import { Link } from 'react-router-dom';
 
 const ExportToExcel = ({ year, ciclo, mencion }) => {
 
@@ -962,7 +963,7 @@ const ExportToExcel = ({ year, ciclo, mencion }) => {
 
   return (
     <>
-      <button onClick={exportExcel}>Download Excel</button>
+      <Link  style={{ color: 'black', border: 'none', fontSize: 'inherit', padding: '.5em 2em .45em 2em', textAlign: 'center', maxWidth: '100%', background: 'orange', borderRadius: '.02cm' }}>Download ACTA</Link>
     </>
   );
 };
