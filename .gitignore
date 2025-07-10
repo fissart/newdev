@@ -2,6 +2,7 @@
 
 # dependencies
 /server/node_modules
+/server/uploads
 /user/node_modules
 /node_modules
 /.pnp
